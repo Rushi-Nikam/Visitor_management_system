@@ -1,35 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import Routers from './Routers';  // Import your Routes component
+import Navbar from './Component/Navbar';  // Import Navbar component
+import Login from './pages/Login';  // Import Login page
+import { Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import RegisterPage from './pages/RegisterPage';
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Use state to track login status
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Handle login success by updating the login state
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      {/* Conditionally render content based on login state */}
+      {isLoggedIn && <Navbar />}
+      
+      {/* Use Routes to handle login redirection */}
+      <Routes>
+        {/* If user is not logged in, show the Login page */}
+        <Route path="/" element={isLoggedIn ? <Routers /> : <Login onLoginSuccess={handleLoginSuccess} />} />
+
+        {/* Define other routes */}
+        <Route path="/home" element={isLoggedIn ? <Home /> : <Login onLoginSuccess={handleLoginSuccess} />} />
+        <Route path="/register" element={isLoggedIn ? <RegisterPage /> : <Login onLoginSuccess={handleLoginSuccess} />} />
+       
+        <Route path="*" element={<div>404 - Page not found</div>} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
