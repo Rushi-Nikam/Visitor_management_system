@@ -122,5 +122,31 @@
     "secondaryPhone": "938428264655",
     "pancard": "2fiodjo123",
     "date": "2024-12-04"
+  },
+  {
+    "name": "priya jagadale",
+    "email": "priyadnikam00@gmail.com",
+    "dob": "2000-01-12",
+    "address": "ed2123",
+    "purposeOfMeet": "business ",
+    "photo": "uploads\\1733764330453.png",
+    "primaryPhone": "12345432",
+    "aadhar": "12343234543",
+    "secondaryPhone": "938428264655",
+    "pancard": "2fiodjo123",
+    "date": "2024-12-05"
+  },
+  {
+    "name": "rushikesh Nikam",
+    "email": "rushidnikam00@gmail.com",
+    "dob": "2000-10-27",
+    "address": "At-Danavalewadi Post-Wavarhire Tal-Man Satara",
+    "purposeOfMeet": "Business Conference",
+    "photo": "uploads\\1733767887247.png",
+    "primaryPhone": "9876543210",
+    "aadhar": "1234 1234 1234 ",
+    "secondaryPhone": "7067543218",
+    "pancard": "CREW1234",
+    "date": "2024-12-14"
   }
 ]

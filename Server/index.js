@@ -12,14 +12,15 @@ app.use(express.json());
 app.use(cors());
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, "uploads/"); // Save files to 'uploads' directory
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + path.extname(file.originalname)); // Use timestamp to avoid filename conflicts
-    },
-  });
-  const upload = multer({ dest: 'uploads/' })
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Folder to save photos
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+  },
+});
+
+const upload = multer({ storage: storage });
 
 // POST route to add a new visitor
 app.post("/add-visitor", upload.single("photo"), (req, res) => {

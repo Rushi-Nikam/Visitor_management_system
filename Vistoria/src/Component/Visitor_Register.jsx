@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import Webcam from "react-webcam";
 
 function VisitorRegister() {
   const [formData, setFormData] = useState({
@@ -15,17 +16,21 @@ function VisitorRegister() {
     purposeOfMeet: "",
   });
   const [photo, setPhoto] = useState(null);
+  const webcamRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPhoto(file);
-    }
+  const capturePhoto = () => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    fetch(imageSrc)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const file = new File([blob], "photo.png", { type: "image/png" });
+        setPhoto(file);
+      });
   };
 
   const handleSubmit = (e) => {
@@ -36,19 +41,17 @@ function VisitorRegister() {
       return;
     }
 
-    // Create a new FormData object and append the form data and photo
     const visitorData = new FormData();
     Object.keys(formData).forEach((key) => {
       visitorData.append(key, formData[key]);
     });
     visitorData.append("photo", photo);
 
-    // Send the form data to the backend
     fetch("http://localhost:5000/add-visitor", {
       method: "POST",
       body: visitorData,
     })
-      .then((response) => response.json()) // Expecting JSON response
+      .then((response) => response.json())
       .then((data) => {
         console.log(data);
         alert("Form submitted successfully!");
@@ -58,7 +61,6 @@ function VisitorRegister() {
         alert("There was an error submitting the form.");
       });
 
-    // Reset the form after submission
     setFormData({
       name: "",
       address: "",
@@ -76,12 +78,14 @@ function VisitorRegister() {
   };
 
   return (
-    <div style={{ margin: "20px" }}>
-      <h2>Visitor Registration Form</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Name:
+    <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-10">
+      <h2 className="text-3xl font-semibold text-center mb-6 text-gray-800">
+        Visitor Registration Form
+      </h2>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Name</label>
             <input
               type="text"
               name="name"
@@ -89,39 +93,38 @@ function VisitorRegister() {
               onChange={handleChange}
               placeholder="Enter your name"
               required
-              style={{ marginLeft: "10px" }}
+              className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-          </label>
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Address:
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Address</label>
             <textarea
               name="address"
               value={formData.address}
               onChange={handleChange}
               placeholder="Enter your address"
               required
-              style={{ marginLeft: "10px", width: "100%", height: "60px" }}
+              className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-          </label>
+          </div>
         </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Date of Birth:
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
             <input
               type="date"
               name="dob"
               value={formData.dob}
               onChange={handleChange}
               required
-              style={{ marginLeft: "10px" }}
+              className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-          </label>
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Primary Phone:
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Primary Phone</label>
             <input
               type="tel"
               name="primaryPhone"
@@ -129,13 +132,14 @@ function VisitorRegister() {
               onChange={handleChange}
               placeholder="Enter your primary phone"
               required
-              style={{ marginLeft: "10px" }}
+              className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-          </label>
+          </div>
         </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Aadhar Number:
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Aadhar Number</label>
             <input
               type="text"
               name="aadhar"
@@ -143,26 +147,26 @@ function VisitorRegister() {
               onChange={handleChange}
               placeholder="Enter your Aadhar number"
               required
-              style={{ marginLeft: "10px" }}
+              className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-          </label>
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Secondary Phone:
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Secondary Phone</label>
             <input
               type="tel"
               name="secondaryPhone"
               value={formData.secondaryPhone}
               onChange={handleChange}
               placeholder="Enter your secondary phone"
-              style={{ marginLeft: "10px" }}
+              className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-          </label>
+          </div>
         </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            PAN Card Number:
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">PAN Card Number</label>
             <input
               type="text"
               name="pancard"
@@ -170,13 +174,12 @@ function VisitorRegister() {
               onChange={handleChange}
               placeholder="Enter your PAN card number"
               required
-              style={{ marginLeft: "10px" }}
+              className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-          </label>
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Email:
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
             <input
               type="email"
               name="email"
@@ -184,13 +187,14 @@ function VisitorRegister() {
               onChange={handleChange}
               placeholder="Enter your email"
               required
-              style={{ marginLeft: "10px" }}
+              className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-          </label>
+          </div>
         </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Whom to Meet:
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Whom to Meet</label>
             <input
               type="text"
               name="whomToMeet"
@@ -198,69 +202,76 @@ function VisitorRegister() {
               onChange={handleChange}
               placeholder="Enter the name of the person to meet"
               required
-              style={{ marginLeft: "10px" }}
+              className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-          </label>
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Meeting Date:
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Meeting Date</label>
             <input
               type="date"
               name="date"
               value={formData.date}
               onChange={handleChange}
               required
-              style={{ marginLeft: "10px" }}
+              className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-          </label>
+          </div>
         </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Purpose of Meeting:
-            <input
-              type="text"
-              name="purposeOfMeet"
-              value={formData.purposeOfMeet}
-              onChange={handleChange}
-              placeholder="Enter the purpose of the meeting"
-              required
-              style={{ marginLeft: "10px" }}
-            />
-          </label>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Purpose of Meeting</label>
+          <input
+            type="text"
+            name="purposeOfMeet"
+            value={formData.purposeOfMeet}
+            onChange={handleChange}
+            placeholder="Enter the purpose of the meeting"
+            required
+            className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
         </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Upload Photo:
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoChange}
-              style={{ marginLeft: "10px" }}
-            />
-          </label>
+<div className="flex justify-evenly">
+
+
+        <div className="my-4 ">
+          <Webcam
+            audio={false}
+            ref={webcamRef}
+            screenshotFormat="image/png"
+            width="300"
+            height="200"
+            videoConstraints={{ facingMode: "user" }}
+          />
+          <div className="mt-2">
+            <button
+              type="button"
+              onClick={capturePhoto}
+              className="bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 focus:outline-none"
+            >
+              Capture Photo
+            </button>
+          </div>
         </div>
-        {photo && (
-          <div style={{ marginBottom: "10px" }}>
-            <p>Photo selected: {photo.name}</p>
+<div className="flex">
+  
+{!photo ? <div className="flex m"><div className="flex mt-[10px] justify-center  items-center border-2 w-[300px] h-[230px]"><h1>capture photo here</h1></div></div>  :(
+          <div className="">
+            <p className="text-sm text-gray-600">Photo selected: {photo.name}</p>
             <img
               src={URL.createObjectURL(photo)}
-              alt="Preview"
-              style={{ maxWidth: "200px", marginTop: "10px" }}
+              alt="Captured"
+              className="max-w-xs rounded-md shadow-md"
             />
           </div>
         )}
-        <div style={{ textAlign: "center", marginTop: "20px" }}>
+</div>
+</div>  
+
+        <div className="flex justify-center mt-6">
           <button
             type="submit"
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "#f44",
-              color: "#fff",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
+            className="bg-indigo-600 text-white p-3 px-8 rounded-md hover:bg-indigo-700 focus:outline-none"
           >
             Submit
           </button>

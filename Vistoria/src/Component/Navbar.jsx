@@ -7,7 +7,10 @@ const Navbar = () => {
       <div className="flex border-2 justify-between">
         <ul className="flex gap-12 mx-12 items-center">
           <li>
-            <NavLink to={`/home`}>Logo</NavLink>
+            <NavLink to={`/home`}>
+            
+            <img src="/Images/Tata_Motor.png" width={`80`} alt="" />
+            </NavLink>
           </li>
         </ul>
         <NavLink to={`/just`}>
