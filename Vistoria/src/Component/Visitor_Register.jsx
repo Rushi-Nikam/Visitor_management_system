@@ -5,6 +5,9 @@ function Visitor_Register() {
     name: "",
     email: "",
     phone: "",
+    dob: "",
+    address: "",
+    purposeOfMeet: "",
     personToMeet: "",
   });
   const [photo, setPhoto] = useState(null);
@@ -37,13 +40,21 @@ function Visitor_Register() {
     alert("Form and photo submitted successfully!");
 
     // Reset form
-    setFormData({ name: "", email: "", phone: "", personToMeet: "" });
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      dob: "",
+      address: "",
+      purposeOfMeet: "",
+      personToMeet: "",
+    });
     setPhoto(null);
   };
 
   return (
     <div style={{ margin: "20px" }}>
-      <h2>Visitor Form</h2>
+      <h2>Visitor Registration Form</h2>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: "10px" }}>
           <label>
@@ -77,7 +88,7 @@ function Visitor_Register() {
           <label>
             Phone:
             <input
-              type="tel" // use 'tel' instead of 'phone' for phone inputs
+              type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
@@ -87,7 +98,47 @@ function Visitor_Register() {
             />
           </label>
         </div>
-        <div className="ml-[10px]">
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Date of Birth:
+            <input
+              type="date"
+              name="dob"
+              value={formData.dob}
+              onChange={handleChange}
+              required
+              style={{ marginLeft: "10px" }}
+            />
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Address:
+            <textarea
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Enter your address"
+              required
+              style={{ marginLeft: "10px", width: "100%", height: "60px" }}
+            />
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Purpose of Visit:
+            <input
+              type="text"
+              name="purposeOfMeet"
+              value={formData.purposeOfMeet}
+              onChange={handleChange}
+              placeholder="Enter the purpose of visit"
+              required
+              style={{ marginLeft: "10px" }}
+            />
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
           <label>
             Select Person to Meet:
             <select
@@ -127,10 +178,17 @@ function Visitor_Register() {
             />
           </div>
         )}
-        <div className="flex justify-center my-10">
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
           <button
-            className="border-2 border-solid border-black px-10 py-2 bg-red-500 text-white rounded-xl"
             type="submit"
+            style={{
+              padding: "10px 20px",
+              backgroundColor: "#f44",
+              color: "#fff",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
           >
             Submit
           </button>
