@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 
-function Visitor_Register() {
+function VisitorRegister() {
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
-    phone: "",
-    dob: "",
     address: "",
+    dob: "",
+    primaryPhone: "",
+    aadhar: "",
+    secondaryPhone: "",
+    pancard: "",
+    email: "",
+    whomToMeet: "",
+    date: "",
     purposeOfMeet: "",
-    personToMeet: "",
   });
   const [photo, setPhoto] = useState(null);
 
@@ -26,28 +30,47 @@ function Visitor_Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (!photo) {
       alert("Please upload a photo before submitting the form.");
       return;
     }
-    if (!formData.personToMeet) {
-      alert("Please select the person you want to meet.");
-      return;
-    }
 
-    console.log("Form Submitted:", formData);
-    console.log("Photo Uploaded:", photo);
-    alert("Form and photo submitted successfully!");
+    // Create a new FormData object and append the form data and photo
+    const visitorData = new FormData();
+    Object.keys(formData).forEach((key) => {
+      visitorData.append(key, formData[key]);
+    });
+    visitorData.append("photo", photo);
 
-    // Reset form
+    // Send the form data to the backend
+    fetch("http://localhost:5000/add-visitor", {
+      method: "POST",
+      body: visitorData,
+    })
+      .then((response) => response.json()) // Expecting JSON response
+      .then((data) => {
+        console.log(data);
+        alert("Form submitted successfully!");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("There was an error submitting the form.");
+      });
+
+    // Reset the form after submission
     setFormData({
       name: "",
-      email: "",
-      phone: "",
-      dob: "",
       address: "",
+      dob: "",
+      primaryPhone: "",
+      aadhar: "",
+      secondaryPhone: "",
+      pancard: "",
+      email: "",
+      whomToMeet: "",
+      date: "",
       purposeOfMeet: "",
-      personToMeet: "",
     });
     setPhoto(null);
   };
@@ -72,29 +95,14 @@ function Visitor_Register() {
         </div>
         <div style={{ marginBottom: "10px" }}>
           <label>
-            Email:
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
+            Address:
+            <textarea
+              name="address"
+              value={formData.address}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder="Enter your address"
               required
-              style={{ marginLeft: "10px" }}
-            />
-          </label>
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Phone:
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="Enter your phone number"
-              required
-              style={{ marginLeft: "10px" }}
+              style={{ marginLeft: "10px", width: "100%", height: "60px" }}
             />
           </label>
         </div>
@@ -113,48 +121,112 @@ function Visitor_Register() {
         </div>
         <div style={{ marginBottom: "10px" }}>
           <label>
-            Address:
-            <textarea
-              name="address"
-              value={formData.address}
+            Primary Phone:
+            <input
+              type="tel"
+              name="primaryPhone"
+              value={formData.primaryPhone}
               onChange={handleChange}
-              placeholder="Enter your address"
+              placeholder="Enter your primary phone"
               required
-              style={{ marginLeft: "10px", width: "100%", height: "60px" }}
+              style={{ marginLeft: "10px" }}
             />
           </label>
         </div>
         <div style={{ marginBottom: "10px" }}>
           <label>
-            Purpose of Visit:
+            Aadhar Number:
+            <input
+              type="text"
+              name="aadhar"
+              value={formData.aadhar}
+              onChange={handleChange}
+              placeholder="Enter your Aadhar number"
+              required
+              style={{ marginLeft: "10px" }}
+            />
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Secondary Phone:
+            <input
+              type="tel"
+              name="secondaryPhone"
+              value={formData.secondaryPhone}
+              onChange={handleChange}
+              placeholder="Enter your secondary phone"
+              style={{ marginLeft: "10px" }}
+            />
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            PAN Card Number:
+            <input
+              type="text"
+              name="pancard"
+              value={formData.pancard}
+              onChange={handleChange}
+              placeholder="Enter your PAN card number"
+              required
+              style={{ marginLeft: "10px" }}
+            />
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Email:
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              required
+              style={{ marginLeft: "10px" }}
+            />
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Whom to Meet:
+            <input
+              type="text"
+              name="whomToMeet"
+              value={formData.whomToMeet}
+              onChange={handleChange}
+              placeholder="Enter the name of the person to meet"
+              required
+              style={{ marginLeft: "10px" }}
+            />
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Meeting Date:
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              required
+              style={{ marginLeft: "10px" }}
+            />
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Purpose of Meeting:
             <input
               type="text"
               name="purposeOfMeet"
               value={formData.purposeOfMeet}
               onChange={handleChange}
-              placeholder="Enter the purpose of visit"
+              placeholder="Enter the purpose of the meeting"
               required
               style={{ marginLeft: "10px" }}
             />
-          </label>
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Select Person to Meet:
-            <select
-              name="personToMeet"
-              value={formData.personToMeet}
-              onChange={handleChange}
-              required
-              style={{ marginLeft: "10px" }}
-            >
-              <option value="" disabled>
-                Choose a person
-              </option>
-              <option value="John Doe">John Doe</option>
-              <option value="Jane Smith">Jane Smith</option>
-              <option value="Mike Johnson">Mike Johnson</option>
-            </select>
           </label>
         </div>
         <div style={{ marginBottom: "10px" }}>
@@ -198,4 +270,4 @@ function Visitor_Register() {
   );
 }
 
-export default Visitor_Register;
+export default VisitorRegister;

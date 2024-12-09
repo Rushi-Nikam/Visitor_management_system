@@ -9,8 +9,8 @@ const Home = () => {
         <div>
           <img src="/Images/Tata_Motor.png" alt="tata_motor" />
         </div>
-        <div className='flex flex-1 ml-32 text-2xl text-center gap-2 '>
-          <h1>Hello, Visitor please</h1> 
+        <div className='flex flex-1 ml-12 text-2xl text-center gap-2 '>
+          <h1>Hello,  please enter visitor details</h1> 
            <Link className='text-blue-500 underline' to={'/Register'}>Click here</Link>
         </div>
       </div>

@@ -2,13 +2,34 @@ import React, { useState, useEffect } from "react";
 
 const VisitorsList = () => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);  // To handle loading state
+  const [error, setError] = useState(null);  // To handle errors
 
   useEffect(() => {
-    fetch("/Visitors.json") // Ensure Visitors.json is correctly served
-      .then((res) => res.json())
-      .then((jsonData) => setData(jsonData))
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
+    fetch('http://localhost:5000/api/visitors') // Replace with your backend URL
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch visitors');
+        }
+        return res.json();
+      })
+      .then((jsonData) => {
+        setData(jsonData);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []); // Empty array means this runs only once when component mounts
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="p-4">
