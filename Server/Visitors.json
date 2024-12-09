@@ -148,5 +148,57 @@
     "secondaryPhone": "7067543218",
     "pancard": "CREW1234",
     "date": "2024-12-14"
+  },
+  {
+    "name": "rushikesh Nikam",
+    "email": "rushidnikam00@gmail.com",
+    "dob": "2000-10-27",
+    "address": "At-Danavalewadi ",
+    "purposeOfMeet": "Business Deal",
+    "photo": "uploads\\1733769184206.png",
+    "primaryPhone": "7387087643",
+    "aadhar": "1234 1234 1234",
+    "secondaryPhone": "7387087641",
+    "pancard": "CBNAA1234",
+    "date": "2024-12-20"
+  },
+  {
+    "name": "Rushi Nikam",
+    "email": "rushikeshdnikam00@gmail.com",
+    "dob": "2001-09-27",
+    "address": "Wakad , pune.",
+    "purposeOfMeet": "Business Meeting",
+    "photo": "uploads\\1733769483393.png",
+    "primaryPhone": "7387087543",
+    "aadhar": "4132 2228 4315",
+    "secondaryPhone": "7387085432",
+    "pancard": "CBANA1234",
+    "date": "2024-12-22"
+  },
+  {
+    "name": "rutik shinde",
+    "email": "rutik12@gmail.com",
+    "dob": "2002-10-22",
+    "address": "nigdi,pune",
+    "purposeOfMeet": "Business Training",
+    "photo": "uploads\\1733769890217.png",
+    "primaryPhone": "7483623213",
+    "aadhar": "4132 4123 4432",
+    "secondaryPhone": "7654738219",
+    "pancard": "CBNAE1234",
+    "date": "2024-12-22"
+  },
+  {
+    "name": "Ruturaj Nikam",
+    "email": "ruturaj12@gmail.com",
+    "dob": "2002-10-22",
+    "address": "Baner , pune",
+    "purposeOfMeet": "Group Discussion",
+    "photo": "uploads\\1733770130317.png",
+    "primaryPhone": "7387075432",
+    "aadhar": "2343 2316 4232",
+    "secondaryPhone": "7387079045",
+    "pancard": "CAERN1234",
+    "date": "2024-12-22"
   }
 ]

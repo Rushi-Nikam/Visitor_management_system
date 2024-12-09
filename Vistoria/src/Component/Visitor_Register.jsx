@@ -1,5 +1,7 @@
 import React, { useState, useRef } from "react";
 import Webcam from "react-webcam";
+import { FaStarOfLife } from "react-icons/fa";
+
 
 function VisitorRegister() {
   const [formData, setFormData] = useState({
@@ -85,7 +87,7 @@ function VisitorRegister() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
+         <div className="flex "> {!formData.name ?<FaStarOfLife className="text-red-400 text-[10px] flex items-center text-center"/>:''} <label className="block text-sm font-medium text-gray-700">Name</label></div>
             <input
               type="text"
               name="name"
@@ -98,7 +100,8 @@ function VisitorRegister() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Address</label>
+          <div className="flex "> {!formData.address ?<FaStarOfLife className="text-red-400 text-[10px] flex items-center text-center"/>:''} <label className="block text-sm font-medium text-gray-700">Address</label></div>
+         
             <textarea
               name="address"
               value={formData.address}
@@ -112,7 +115,7 @@ function VisitorRegister() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+          <div className="flex "> {!formData.dob ?<FaStarOfLife className="text-red-400 text-[10px] flex items-center text-center"/>:''} <label className="block text-sm font-medium text-gray-700">Date of Birth</label></div>
             <input
               type="date"
               name="dob"
@@ -124,7 +127,7 @@ function VisitorRegister() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Primary Phone</label>
+          <div className="flex"> {!formData.primaryPhone ?<FaStarOfLife className="text-red-400 text-[10px] flex items-center text-center"/>:''} <label className="block text-sm font-medium text-gray-700">Primary Number</label></div>
             <input
               type="tel"
               name="primaryPhone"
@@ -139,7 +142,7 @@ function VisitorRegister() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Aadhar Number</label>
+          <div className="flex"> {!formData.aadhar ?<FaStarOfLife className="text-red-400 text-[10px] flex items-center text-center"/>:''} <label className="block text-sm font-medium text-gray-700">Aadhar Number</label></div>
             <input
               type="text"
               name="aadhar"
@@ -152,7 +155,7 @@ function VisitorRegister() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Secondary Phone</label>
+          <div className="flex"> {!formData.secondaryPhone ?<FaStarOfLife className="text-red-400 text-[10px] flex items-center text-center"/>:''} <label className="block text-sm font-medium text-gray-700">Second mobile number</label></div>
             <input
               type="tel"
               name="secondaryPhone"
@@ -166,7 +169,7 @@ function VisitorRegister() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">PAN Card Number</label>
+          <div className="flex"> {!formData.pancard ?<FaStarOfLife className="text-red-400 text-[10px] flex items-center text-center"/>:''} <label className="block text-sm font-medium text-gray-700">Pan Card Number</label></div>
             <input
               type="text"
               name="pancard"
@@ -179,7 +182,7 @@ function VisitorRegister() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+          <div className="flex"> {!formData.email ?<FaStarOfLife className="text-red-400 text-[10px] flex items-center text-center"/>:''} <label className="block text-sm font-medium text-gray-700">Email Id</label></div>
             <input
               type="email"
               name="email"
@@ -194,7 +197,7 @@ function VisitorRegister() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Whom to Meet</label>
+          <div className="flex"> {!formData.whomToMeet ?<FaStarOfLife className="text-red-400 text-[10px] flex items-center text-center"/>:''} <label className="block text-sm font-medium text-gray-700">whom To Meet</label></div>
             <input
               type="text"
               name="whomToMeet"
@@ -207,7 +210,7 @@ function VisitorRegister() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Meeting Date</label>
+          <div className="flex"> {!formData.date ?<FaStarOfLife className="text-red-400 text-[10px] flex items-center text-center"/>:''} <label className="block text-sm font-medium text-gray-700">Meeting Date</label></div>
             <input
               type="date"
               name="date"
@@ -220,7 +223,7 @@ function VisitorRegister() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Purpose of Meeting</label>
+        <div className="flex"> {!formData.purposeOfMeet ?<FaStarOfLife className="text-red-400 text-[10px] flex items-center text-center"/>:''} <label className="block text-sm font-medium text-gray-700">Purpose Of Meet</label></div>
           <input
             type="text"
             name="purposeOfMeet"
@@ -256,7 +259,7 @@ function VisitorRegister() {
 <div className="flex">
   
 {!photo ? <div className="flex m"><div className="flex mt-[10px] justify-center  items-center border-2 w-[300px] h-[230px]"><h1>capture photo here</h1></div></div>  :(
-          <div className="">
+          <div>
             <p className="text-sm text-gray-600">Photo selected: {photo.name}</p>
             <img
               src={URL.createObjectURL(photo)}
