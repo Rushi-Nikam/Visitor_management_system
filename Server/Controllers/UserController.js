@@ -1,32 +1,39 @@
-const User = require('../Models/User.model');
+const bcrypt = require('bcrypt');
+const Users = require('../Models/User.model');
+const createUserService = require('../Services/createService');
 
-// Function to create a new user
+// Controller function for creating a new user
 const createUser = async (req, res) => {
   try {
-    const { name, roleid, email, phone, created_by } = req.body;
-
-    if (!name || !roleid || !email || !phone || !created_by) {
-      return res.status(400).json({ message: 'All fields are required' });
-    }
-
-    const newUser = await User.create({
-      name,
-      roleid,
-      email,
-      phone,
-      created_by,
-    });
-
-    res.status(201).json({
-      message: 'User created successfully!',
-      data: newUser,
-    });
+    await createUserService(req, res); // Delegating logic to the service
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error creating user' });
   }
 };
 
-// Other CRUD operations for users can go here
+// Controller function to fetch all users
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await Users.findAll({
+      attributes: { exclude: ['password'] },
+    });
 
-module.exports = { createUser };
+    res.status(200).json({
+      success: true,
+      message: 'Users fetched successfully!',
+      data: users,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching users',
+    });
+  }
+};
+
+module.exports = {
+  createUser,
+  getAllUsers,
+};

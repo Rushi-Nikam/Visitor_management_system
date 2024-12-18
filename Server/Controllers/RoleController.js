@@ -17,7 +17,7 @@ const createRole = async (req, res) => {
     res.status(201).json({
       message: 'Role created successfully!',
       data: newRole,
-    });
+    })
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: `Error creating role: ${error.message}` });

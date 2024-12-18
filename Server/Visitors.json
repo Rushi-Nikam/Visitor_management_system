@@ -200,5 +200,18 @@
     "secondaryPhone": "7387079045",
     "pancard": "CAERN1234",
     "date": "2024-12-22"
+  },
+  {
+    "name": "rushikes",
+    "email": "rushidnikam00@gmail.com",
+    "dob": "2024-11-26",
+    "address": "wakad,pune",
+    "purposeOfMeet": "bushiness",
+    "photo": "uploads\\1734350345806.png",
+    "primaryPhone": "7387946352",
+    "aadhar": "384652536348",
+    "secondaryPhone": "7463524245",
+    "pancard": "CAAN123P",
+    "date": "2024-12-18"
   }
 ]

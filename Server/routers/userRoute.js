@@ -1,14 +1,21 @@
 const express = require('express');
-const router = express.Router();
-const { createUser } = require('../Controllers/UserController'); // Import the controller functions
+const userRoute = express.Router();
+const { createUser, getAllUsers } = require('../Controllers/UserController'); // Import the controller functions
 
 // Route to create a new user
-router.post('/create', createUser);
+userRoute.post('/create', createUser);
 
-// Other routes for users can be added here, e.g.:
-// router.get('/', getAllUsers); // For fetching all users
-// router.get('/:id', getUserById); // For fetching a user by ID
-// router.put('/:id', updateUser); // For updating a user by ID
-// router.delete('/:id', deleteUser); // For deleting a user by ID
+// Route to fetch all users
+userRoute.get('/', getAllUsers);
 
-module.exports = router;
+// Placeholder for future user routes
+// Route to fetch a user by ID
+// userRoute.get('/:id', getUserById); 
+
+// Route to update a user by ID
+// userRoute.put('/:id', updateUser); 
+
+// Route to delete a user by ID
+// userRoute.delete('/:id', deleteUser); 
+
+module.exports = userRoute;
