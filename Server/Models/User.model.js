@@ -33,7 +33,13 @@ const User = db.define('User', {
       key: 'id',
     },
   },
-}, {
+  created_by: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+  },
+},
+
+ {
   timestamps: false,
 });
 

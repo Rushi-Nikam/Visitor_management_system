@@ -46,16 +46,17 @@ const Login = ({ onLoginSuccess }) => {
       onLoginSuccess();
 
       // Handle role-based navigation
-      const roleName = data.user.roleid; // Extract role name from the response
+      const roleName = data.user.role; // Extract role name from the response
+      console.log(roleName)
       switch (roleName) {
-        case 3:
-          navigate('/visitor-dashboard'); // Navigate to visitor dashboard
+        case "SuperAdmin":
+          navigate('/superAdmin-dashboard'); // Navigate to visitor dashboard
           break;
-        case 2:
+        case "Admin":
           navigate('/admin-dashboard'); // Navigate to admin dashboard
           break;
-        case 1:
-          navigate('/superAdmin-dashboard'); // Navigate to superadmin dashboard
+        case "Operator":
+          navigate('/home '); // Navigate to superadmin dashboard
           break;
         default:
           navigate('/home'); // Default fallback

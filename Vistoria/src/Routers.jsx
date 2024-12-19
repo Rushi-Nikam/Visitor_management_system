@@ -15,7 +15,6 @@ const Routers = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/superAdmin-dashboard" element={<Superadmin_dash/>} />
         <Route path="/just" element={<VisitorsList/>} />
         <Route path="**" element={<div>404 - Page not found</div>} />
       </Routes>

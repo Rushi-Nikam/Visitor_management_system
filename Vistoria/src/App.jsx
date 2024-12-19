@@ -7,6 +7,7 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import RegisterPage from './pages/RegisterPage';
 import VisitorsList from './pages/VisitorsList';
+import Superadmin_dash from './pages/Superadmin_dash';
 
 function App() {
   // Use state to track login status
@@ -29,6 +30,7 @@ function App() {
 
         {/* Define other routes */}
         <Route path="/home" element={isLoggedIn ? <Home /> : <Login onLoginSuccess={handleLoginSuccess} />} />
+        <Route path="/superAdmin-dashboard" element={isLoggedIn ? <Superadmin_dash /> : <Login onLoginSuccess={handleLoginSuccess} />} />
         <Route path="/register" element={isLoggedIn ? <RegisterPage /> : <Login onLoginSuccess={handleLoginSuccess} />} />
         <Route path="/just" element={isLoggedIn ? <VisitorsList/> : <Login onLoginSuccess={handleLoginSuccess} />} />
        
