@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../redux/Slices/UserSlice'; // Import the action
+import { useNavigate } from 'react-router-dom';
 
-const Login = ({ onLoginSuccess }) => {
+const Login = () => {
   const [form, setForm] = useState({
     email: '',
     password: '',
   });
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const ChangeHandler = (e) => {
@@ -14,8 +17,9 @@ const Login = ({ onLoginSuccess }) => {
     setForm((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const SubmitHandler = async (e) => {
+  const login = async (e) => {
     e.preventDefault();
+
     if (!form.email || !form.password) {
       setError('Both email and password are required');
       return;
@@ -31,35 +35,35 @@ const Login = ({ onLoginSuccess }) => {
       });
 
       const data = await response.json();
-      console.log({ data });
 
       if (!response.ok) {
         setError(data.message || 'Login failed');
         return;
       }
 
-      // Save token, user info, and role info in local storage
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('role', JSON.stringify(data.user.role)); // Save the full role object
+      // Store the token and user info in localStorage
+      localStorage.setItem('Auth', data.token);
+      localStorage.setItem('role', JSON.stringify(data.user.role)); // Store role in localStorage
 
-      // Notify parent component of login success
-      onLoginSuccess();
+      // Dispatch action to set the user data in Redux store
+      dispatch(setUser({
+        user: data.user,
+        isAuthenticated: true, // Mark as authenticated
+      }));
 
-      // Handle role-based navigation
-      const roleName = data.user.role; // Extract role name from the response
-      console.log(roleName)
-      switch (roleName) {
-        case "SuperAdmin":
-          navigate('/superAdmin-dashboard'); // Navigate to visitor dashboard
+      // Redirect the user based on their role
+      switch (data.user.role) {
+        case 'SuperAdmin':
+          navigate('/superAdmin-dashboard');
           break;
-        case "Admin":
-          navigate('/admin-dashboard'); // Navigate to admin dashboard
+        case 'Admin':
+          navigate('/Admin-dashboard');
           break;
-        case "Operator":
-          navigate('/home '); // Navigate to superadmin dashboard
+        case 'Operator':
+          navigate('/Operator-dashboard');
           break;
         default:
-          navigate('/home'); // Default fallback
+          navigate('/');
           break;
       }
     } catch (err) {
@@ -70,17 +74,16 @@ const Login = ({ onLoginSuccess }) => {
 
   return (
     <div className="flex py-[50px] justify-center items-center">
-      <div className="flex bg-[#d3d1df] rounded-xl w-[1000px] h-[600px] max-h-[1200px] p-6">
+      <div className="flex bg-[#d3d1df] rounded-xl w-[900px] h-[600px] max-h-[1200px] p-6">
         <div className="flex flex-col">
-          <div className="flex justify-center my-12 text-4xl">
-            <h1 className="text-3xl text-white font-bold">Visitor Management System</h1>
+          <div className="flex justify-center text-4xl">
+            <h1 className="text-3xl text-white font-bold">Visitor Check-In and Authorization</h1>
           </div>
 
-          {/* Left Section: Login Form */}
           <div className="flex">
             <div className="flex-1 flex flex-col justify-center items-center">
-              <h2 className="text-2xl mb-6">Welcome To Tata Motors</h2>
-              <form className="w-[80%]" onSubmit={SubmitHandler}>
+              <h2 className="text-2xl mb-6">Welcome To Visioria</h2>
+              <form className="w-[80%]" onSubmit={login}>
                 {error && (
                   <div className="text-red-700 mb-4">
                     <strong>{error}</strong>
@@ -120,7 +123,6 @@ const Login = ({ onLoginSuccess }) => {
               </form>
             </div>
 
-            {/* Right Section: Image */}
             <div className="flex-1 flex justify-center items-center border-l-2">
               <img src="/Images/Login.png" alt="Login" className="max-w-full w-[600px] h-auto" />
             </div>
