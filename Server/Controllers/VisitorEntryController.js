@@ -34,7 +34,7 @@ const getAllVisitorEntries = async (req, res) => {
   }
 };
 
-const getVisitorEntryById = async (req, res) => {
+const getVisitorEntryByOtp = async (req, res) => {
   try {
     const visitorEntries = await VisitorEntry.findAll({
       where : {
@@ -49,4 +49,4 @@ const getVisitorEntryById = async (req, res) => {
 };
 
 // Export the functions
-module.exports = { createVisitorEntry, getAllVisitorEntries, getVisitorEntryById };
+module.exports = { createVisitorEntry, getAllVisitorEntries, getVisitorEntryByOtp };
