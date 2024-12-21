@@ -1,5 +1,6 @@
 const express = require('express');
 const roleController = require('../Controllers/RoleController');
+const OtpController = require('../Controllers/otpController');
 const RoleRoute = express.Router();
 
 // Route to create a new role
@@ -16,5 +17,8 @@ RoleRoute.put('/roles/:id', roleController.updateRole);
 
 // Route to delete a role by ID
 RoleRoute.delete('/roles/:id', roleController.deleteRole);
+
+// Route to sendOtp
+RoleRoute.post('/send-otp', OtpController.sendOtp);
 
 module.exports = RoleRoute;
