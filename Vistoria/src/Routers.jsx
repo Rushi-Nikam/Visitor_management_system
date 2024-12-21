@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { useSelector } from 'react-redux'; // Import Redux hook
 import Home from './pages/Home';
 import RegisterPage from './pages/RegisterPage';
 import Login from './pages/Login';
@@ -9,20 +10,25 @@ import Superadmin_dash from './pages/Superadmin_dash';
 import Admin_dash from './pages/Admin_dash';
 import Operator_dash from './pages/Operator_dash';
 import Logout from './pages/Logout';
+import ProtectedRoute from './Component/ProtectedRoute';
 
 const Routers = () => {
+  // const isAuthenticated = useSelector((state) => state.user.isAuthenticated); // Access authentication status
+
   return (
     <>
-     {<Login/>?<Navbar />:"null" }
+      {/* Conditionally render Navbar if the user is authenticated */}
+       <Navbar />
+
       <Routes>
         {/* Define the protected routes */}
-        <Route path="/home" element={<Home />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/superAdmin-dashboard" element={<Superadmin_dash />} />
-        <Route path="/Admin-dashboard" element={<Admin_dash />} />
-        <Route path="/Operator-dashboard" element={<Operator_dash />} />
-        <Route path="/just" element={<VisitorsList />} />
-        <Route path="/logout" element={<Logout/>} />
+        <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+        <Route path="/register" element={<ProtectedRoute><RegisterPage /></ProtectedRoute>} />
+        <Route path="/superAdmin-dashboard" element={<ProtectedRoute><Superadmin_dash /></ProtectedRoute>} />
+        <Route path="/Admin-dashboard" element={<ProtectedRoute><Admin_dash /></ProtectedRoute>} />
+        <Route path="/Operator-dashboard" element={<ProtectedRoute><Operator_dash /></ProtectedRoute>} />
+        <Route path="/just" element={<ProtectedRoute><VisitorsList /></ProtectedRoute>} />
+        <Route path="/logout" element={<Logout />} />
 
         {/* Login route */}
         <Route path="/" element={<Login />} />
