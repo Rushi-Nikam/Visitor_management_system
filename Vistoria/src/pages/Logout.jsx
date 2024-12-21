@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { clearUser } from '../redux/Slices/UserSlice';  
+import { clearUser } from '../redux/Slices/UserSlice';  // Assuming you have this action
 
 const Logout = () => {
   const dispatch = useDispatch();
@@ -20,7 +20,7 @@ const Logout = () => {
 
   return (
     <div>
-      <button onClick={handleLogout}>{`logout`}</button>
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 };

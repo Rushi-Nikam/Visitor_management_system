@@ -1,29 +1,25 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Logout from '../pages/Logout';
 
 const Navbar = () => {
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+
   return (
     <main>
-      <div className="flex border-2 justify-between">
+      <div className="flex border-2 justify-between items-center p-4">
+     
         <ul className="flex gap-12 mx-12 items-center">
-          <li>
-            <NavLink to={`/home`}>
-            
-            <img src="/Images/Tata_Motor.png" width={`80`} alt="" />
+          <li className="flex px-10 text-cyan-200">
+            <NavLink to={`${isAuthenticated?`/home`:'/'}`}>
+              <img src="/Images/Visitoria3.png" width={`80`} alt="Visitoria Logo" />
             </NavLink>
           </li>
         </ul>
-        {/* <NavLink to={`/just`}>
-          <button className="flex border bg-red-500 px-4 py-2 rounded-xl text-white">
-          View Visitors
-          </button>
-        </NavLink> */}
+
       
-        
-         <Logout/>
-          
-       
+        {isAuthenticated && <Logout />}
       </div>
     </main>
   );

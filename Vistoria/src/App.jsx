@@ -1,22 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter } from 'react-router-dom';  // Import BrowserRouter
-import Routers from './Routers';  // Import your Routes component
-import { Provider, useSelector } from 'react-redux';
-import store from './redux/store';
-import Login from './pages/Login';
+import React, { useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+// import { useDispatch } from 'react-redux';
+// import { setUser } from './redux/Slices/UserSlice'; // Import action
+// import Navbar from './Component/Navbar';
+import Routers from './Routers';
 
-function App() {
-  // Use useSelector to check if the user is logged in from Redux store
-  const user = useSelector((state) => state.user.user);
+const App = () => {
+  // const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   const token = localStorage.getItem('Auth');
+  //   if (token) {
+  //     // Optionally fetch user details with the token or restore state
+  //     dispatch(setUser({ token, user: { role: "user" } }));
+  //   }
+  // }, [dispatch]);
 
   return (
+    <BrowserRouter>
     
-      <BrowserRouter>
-        {user ? <Routers /> :<Login/>}
- 
-      </BrowserRouter>
-    
+      <Routers />
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
