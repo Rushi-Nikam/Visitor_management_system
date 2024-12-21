@@ -34,5 +34,19 @@ const getAllVisitorEntries = async (req, res) => {
   }
 };
 
+const getVisitorEntryById = async (req, res) => {
+  try {
+    const visitorEntries = await VisitorEntry.findAll({
+      where : {
+        otp: req.url.id
+      }
+    });
+    res.status(200).json(visitorEntries);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching visitor entries' });
+  }
+};
+
 // Export the functions
-module.exports = { createVisitorEntry, getAllVisitorEntries };
+module.exports = { createVisitorEntry, getAllVisitorEntries, getVisitorEntryById };
