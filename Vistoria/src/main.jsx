@@ -9,7 +9,6 @@ import store from './redux/store.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
   <Provider store={store}>
-
     <App />
     </Provider>
   </StrictMode>,

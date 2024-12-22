@@ -1,12 +1,12 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { useSelector } from 'react-redux'; // Import Redux hook
+// import { useSelector } from 'react-redux'; // Import Redux hook
 import Home from './pages/Home';
 import RegisterPage from './pages/RegisterPage';
 import Login from './pages/Login';
 import VisitorsList from './pages/VisitorsList';
 import Navbar from './Component/Navbar';
-import Superadmin_dash from './pages/Superadmin_dash';
+import Superadmin_dash from './pages/SuperAdmin_dash';
 import Admin_dash from './pages/Admin_dash';
 import Operator_dash from './pages/Operator_dash';
 import Logout from './pages/Logout';

@@ -9,23 +9,37 @@ const Login = () => {
     password: '',
   });
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // New state for loading
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Change handler for form fields
   const ChangeHandler = (e) => {
     const { name, value } = e.target;
     setForm((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  // Handle form submission
   const login = async (e) => {
     e.preventDefault();
 
+    // Client-side validation
     if (!form.email || !form.password) {
       setError('Both email and password are required');
       return;
     }
 
+    // Email pattern validation
+    const emailPattern = /\S+@\S+\.\S+/;
+    if (!emailPattern.test(form.email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    setIsLoading(true); // Set loading state to true
+
     try {
+      // Send POST request to backend
       const response = await fetch('http://localhost:3000/api/auth/login', {
         method: 'POST',
         headers: {
@@ -36,22 +50,26 @@ const Login = () => {
 
       const data = await response.json();
 
+      // If the response is not OK, show an error
       if (!response.ok) {
         setError(data.message || 'Login failed');
+        setIsLoading(false);
         return;
       }
+      dispatch(setUser({
+        token: data.token, // Token from response
+        role: data.user.role, // Role from response
+        user: data.user, 
+          }));
 
       // Store the token and user info in localStorage
       localStorage.setItem('Auth', data.token);
-      localStorage.setItem('role', JSON.stringify(data.user.role)); // Store role in localStorage
+      localStorage.setItem('role', JSON.stringify(data.user.role));
 
       // Dispatch action to set the user data in Redux store
-      dispatch(setUser({
-        user: data.user,
-        isAuthenticated: true, // Mark as authenticated
-      }));
 
-      // Redirect the user based on their role
+    
+      // Redirect based on user role
       switch (data.user.role) {
         case 'SuperAdmin':
           navigate('/superAdmin-dashboard');
@@ -69,6 +87,7 @@ const Login = () => {
     } catch (err) {
       console.error(err);
       setError('An error occurred. Please try again.');
+      setIsLoading(false); // Reset loading state
     }
   };
 
@@ -117,8 +136,12 @@ const Login = () => {
                   />
                 </div>
 
-                <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded mt-4">
-                  Log In
+                <button
+                  type="submit"
+                  className="w-full p-2 bg-blue-500 text-white rounded mt-4"
+                  disabled={isLoading} // Disable button while loading
+                >
+                  {isLoading ? 'Logging In...' : 'Log In'}
                 </button>
               </form>
             </div>

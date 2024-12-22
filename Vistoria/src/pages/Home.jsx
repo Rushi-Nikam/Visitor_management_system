@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 const Home = () => {
-  const [view,setview]=useState(false);
+  // const [view,setview]=useState(false);
   return (
     <div className='flex flex-col my-10 justify-center mx-auto items-center'>
     <div>
@@ -15,7 +15,6 @@ const Home = () => {
         </div>
       </div>
       <div>
-        <button></button>
       </div>
     </div>
     </div>

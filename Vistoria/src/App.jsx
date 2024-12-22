@@ -18,7 +18,6 @@ const App = () => {
 
   return (
     <BrowserRouter>
-    
       <Routers />
     </BrowserRouter>
   );

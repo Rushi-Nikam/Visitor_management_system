@@ -12,9 +12,9 @@ const Navbar = () => {
      
         <ul className="flex gap-12 mx-12 items-center">
           <li className="flex px-10 text-cyan-200">
-            <NavLink to={`${isAuthenticated?`/home`:'/'}`}>
+            {/* <NavLink to={`${isAuthenticated?``:'/'}`}> */}
               <img src="/Images/Visitoria3.png" width={`80`} alt="Visitoria Logo" />
-            </NavLink>
+            {/* </NavLink> */}
           </li>
         </ul>
 

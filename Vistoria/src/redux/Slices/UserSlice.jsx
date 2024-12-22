@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// Define the initial state
+
 const initialState = {
-  user:JSON.parse(localStorage.getItem('user')) || null ,// User data will be stored here
-  isAuthenticated:!! localStorage.getItem('Auth'),
+  user: JSON.parse(localStorage.getItem('user')) || null,
+  isAuthenticated: !!localStorage.getItem('Auth'),
   role: localStorage.getItem('role') || null,  // Track if the user is authenticated
 };
 
@@ -14,19 +14,26 @@ const userSlice = createSlice({
   reducers: {
     // Action to set user data after login
     setUser: (state, action) => {
-      state.user = action.payload;
+      state.user = action.payload.user;
       state.isAuthenticated = true;
+      state.role = action.payload.role;
+
+      // Save to localStorage
       localStorage.setItem('Auth', action.payload.token); // Save token
       localStorage.setItem('role', action.payload.role); // Save role
-      localStorage.setItem('user', JSON.stringify(action.payload.user)); 
+      localStorage.setItem('user', JSON.stringify(action.payload.user)); // Save user data
     },
+    
     // Action to clear user data on logout
     clearUser: (state) => {
       state.user = null;
       state.isAuthenticated = false;
+      state.role = null;
+      
+      // Clear localStorage
       localStorage.removeItem('Auth'); // Clear token
       localStorage.removeItem('role'); // Clear role
-      localStorage.removeItem('user'); // Mark as not authenticated
+      localStorage.removeItem('user'); // Clear user data
     },
   },
 });
