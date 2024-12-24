@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Forms from '../Component/Forms';
-
+import { MdEditSquare } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
+import { AiOutlineClose } from "react-icons/ai";
 const Superadmin_dash = () => {
   const [toggle, setToggle] = useState(false);
   const [list, setList] = useState([]);
@@ -66,17 +68,21 @@ const Superadmin_dash = () => {
         <button
           type="button"
           onClick={ClickHandler}
-          className="flex px-6 text-white py-2 rounded bg-red-500"
+          className="flex px-6 text-white py-2 items-center rounded bg-red-500 "
         >
-          {updateUser ? 'Cancel Update' : 'Add User'}
+          {updateUser ? <AiOutlineClose /> : 'Add User'}
         </button>
-        <button
+
+        {
+          updateUser?"": <button
           type="button"
           onClick={listHandler}
           className="flex px-6 text-white py-2 rounded bg-red-500"
         >
           View List
         </button>
+        }
+       
       </div>
 
       {toggle && (
@@ -140,20 +146,23 @@ const Superadmin_dash = () => {
                   <td className="px-4 py-2 border border-gray-300">{user.phone}</td>
                   <td className="px-4 py-2 border border-gray-300">{user.created_by}</td>
                   <td className="px-4 py-2 border border-gray-300 space-x-2">
+                    <div className='flex'>
                     <button
                       type="button"
                       onClick={() => updateHandler(user)}
-                      className="px-4 py-2 text-white bg-blue-500 rounded"
+                      className=" py-1 text-yellow-500 rounded"
                     >
-                      Update
+                       <MdEditSquare  size={35}/>
                     </button>
                     <button
                       type="button"
                       onClick={() => deleteHandler(user.id)}
-                      className="px-4 py-2 text-white bg-red-500 rounded"
+                      className=" py-2 text-red-500 rounded"
                     >
-                      Delete
+                      <MdDelete size={35} />
                     </button>
+                    </div>
+                  
                   </td>
                 </tr>
               ))}
