@@ -24,6 +24,17 @@ const [photo ,setphoto]=useState(null);
         throw new Error(`Visitor not found. HTTP status: ${response.status}`);
       }
       const data = await response.json();
+      if (data.photo && Array.isArray(data.photo)) {
+        const byteArray = new Uint8Array(data.photo); // Create a Uint8Array from the byte array
+        const blob = new Blob([byteArray]); // Create a Blob object
+        const base64Photo = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob); // Convert the Blob to a Base64 string
+        });
+  
+        data.photo = base64Photo; // Replace the byte array with the Base64 string
+      }
       setVisitor(data);
       console.log({data});
       setUpdatedVisitor(data); // Initialize the updatedVisitor with fetched data
@@ -154,7 +165,14 @@ const [photo ,setphoto]=useState(null);
                   {visitor.id}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                {photo ? <img src={URL.createObjectURL(photo)} alt="Visitor" width="50" height="50" /> : "No Photo"}
+                {photo ? <img src={URL.createObjectURL(photo)} alt="Visitor" width="50" height="50" /> : 
+                visitor.photo && (
+      <img
+        src={visitor.photo} // This will work for Base64 strings or file URLs
+        alt={`${visitor.name}'s photo`}
+        style={{ width: "150px", height: "150px", objectFit: "cover" }}
+      />
+    )}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   {visitor.name}
