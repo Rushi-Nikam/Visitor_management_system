@@ -26,15 +26,18 @@ const [photo ,setphoto]=useState(null);
       const data = await response.json();
       if (data.photo && Array.isArray(data.photo)) {
         const byteArray = new Uint8Array(data.photo); // Create a Uint8Array from the byte array
-        const blob = new Blob([byteArray]); // Create a Blob object
+        const blob = new Blob([byteArray], { type: 'image/png' }); // Create a Blob with PNG type
+      
+        // Convert Blob to Base64 string
         const base64Photo = await new Promise((resolve) => {
           const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.readAsDataURL(blob); // Convert the Blob to a Base64 string
+          reader.onloadend = () => resolve(reader.result); // Resolve Base64 string
+          reader.readAsDataURL(blob); // Convert Blob to Base64
         });
-  
+      
         data.photo = base64Photo; // Replace the byte array with the Base64 string
       }
+      
       setVisitor(data);
       console.log({data});
       setUpdatedVisitor(data); // Initialize the updatedVisitor with fetched data
@@ -93,7 +96,7 @@ const [photo ,setphoto]=useState(null);
   
       const data = await response.json();
       setVisitor(data); // Update the visitor state with the new data
-      console.log({ data });
+      // console.log({ data });
       setIsEditing(false); // Switch back to view mode after saving
       setSuccessMessage("Visitor updated successfully!"); // Show success message
   
