@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-
+import React, { useState,useRef } from "react";
+import Webcam from "react-webcam";
 const Operator_dash = () => {
   const [mobileNumber, setMobileNumber] = useState("");
   const [visitor, setVisitor] = useState(null);
@@ -8,7 +8,8 @@ const Operator_dash = () => {
   const [isEditing, setIsEditing] = useState(false); // Track editing state
   const [updatedVisitor, setUpdatedVisitor] = useState({}); // Store updated visitor data
   const [successMessage, setSuccessMessage] = useState(null); // State for success message
-
+const [photo ,setphoto]=useState(null);
+ const webcamRef = useRef(null);
   // Fetch visitor by mobile number
   const fetchVisitorByMobileNumber = async () => {
     setLoading(true);
@@ -33,7 +34,15 @@ const Operator_dash = () => {
       setLoading(false);
     }
   };
-
+  const capturePhoto = () => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    fetch(imageSrc)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const file = new File([blob], "photo.png", { type: "image/png" });
+        setphoto(file);
+      });
+  };
   // Handle field changes in the edit form
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,7 +57,14 @@ const Operator_dash = () => {
     setLoading(true);
     setError(null);
     setSuccessMessage(null); // Reset success message before saving
+  
     try {
+      // Include the photo in the updated visitor details
+      const visitorWithPhoto = {
+        ...updatedVisitor,
+        photo, // Ensure `photo` contains the Base64 string or file URL
+      };
+  
       const response = await fetch(
         `http://localhost:3000/api/visit/visitor/${mobileNumber}`,
         {
@@ -56,22 +72,25 @@ const Operator_dash = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(updatedVisitor),
+          body: JSON.stringify(visitorWithPhoto),
         }
       );
+  
       if (!response.ok) {
         throw new Error("Failed to update visitor details");
       }
+  
       const data = await response.json();
-      setVisitor(data);
-      console.log({data}); // Update the visitor state with the new data
+      setVisitor(data); // Update the visitor state with the new data
+      console.log({ data });
       setIsEditing(false); // Switch back to view mode after saving
       setSuccessMessage("Visitor updated successfully!"); // Show success message
-
+  
       // Clear the search box and reset states
       setMobileNumber("");
       setUpdatedVisitor({});
-
+      setphoto(""); // Reset photo after saving
+  
       // Show success alert and reset the success message after 3 seconds
       setTimeout(() => {
         setSuccessMessage(null);
@@ -83,7 +102,7 @@ const Operator_dash = () => {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <h1 className="text-2xl font-bold text-center mb-6">Visitor Details</h1>
@@ -118,6 +137,7 @@ const Operator_dash = () => {
             <thead>
               <tr>
                 <th className="border border-gray-300 px-4 py-2">ID</th>
+                <th className="border border-gray-300 px-4 py-2">Photo</th>
                 <th className="border border-gray-300 px-4 py-2">Name</th>
                 <th className="border border-gray-300 px-4 py-2">
                   Mobile Number
@@ -132,6 +152,9 @@ const Operator_dash = () => {
               <tr>
                 <td className="border border-gray-300 px-4 py-2">
                   {visitor.id}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                {photo ? <img src={URL.createObjectURL(photo)} alt="Visitor" width="50" height="50" /> : "No Photo"}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   {visitor.name}
@@ -166,6 +189,18 @@ const Operator_dash = () => {
         <div className="mt-6">
           <h2 className="text-xl font-semibold mb-4">Edit Visitor Details</h2>
           <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Photo 
+              </label>
+              <input
+                type="text"
+                name="photo"
+                value={photo || " "}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Name
@@ -226,6 +261,25 @@ const Operator_dash = () => {
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+             <div className="my-4 ">
+                      <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/png"
+                        width="300"
+                        height="200"
+                        videoConstraints={{ facingMode: "user" }}
+                      />
+                      <div className="mt-2">
+                        <button
+                          type="button"
+                          onClick={capturePhoto}
+                          className="bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 focus:outline-none"
+                        >
+                          Capture Photo
+                        </button>
+                      </div>
+                    </div>
             <div className="flex space-x-4">
               <button
                 onClick={handleSave}
