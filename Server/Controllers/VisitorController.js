@@ -1,57 +1,28 @@
-const Visitor = require('../Models/Visitors.model');
-const VisitorEntry = require('../Models/VisitorEntry.model');
+const VisitorService = require('../Services/VisitorService');
 
 // Create a new visitor
 const createVisitor = async (req, res) => {
-    try {
-      const { 
-        name, address, gender, date_of_birth, mobile_number, photo, pancard, aadhar_card_number, created_by, whom_to_meet, purpose_of_meet 
-      } = req.body;
-  
-      if (!name || !address || !gender || !date_of_birth || !mobile_number || !created_by || !whom_to_meet || !purpose_of_meet) {
-        return res.status(400).json({ message: 'All required fields must be filled' });
-      }
-  
-      // Create the visitor
-      const newVisitor = await Visitor.create({
-        name,
-        address,
-        gender,
-        date_of_birth,
-        mobile_number,
-        photo,
-        pancard,
-        aadhar_card_number,
-        created_by,
-      });
-  
-      // After creating visitor, create a visitor entry
-      await VisitorEntry.create({
-        visitor_id: newVisitor.id, // link the visitor entry with the visitor
-        whom_to_meet, 
-        purpose_of_meet,
-        created_by,
-      });
-  
-      res.status(201).json({
-        message: 'Visitor and visitor entry created successfully!',
-        data: newVisitor,
-      });
-  
-    } catch (error) {
-      console.error('Error in createVisitor:', error); // Log the full error
-      res.status(500).json({ message: 'Error creating visitor and entry', error: error.message }); // Include error details in the response
-    }
-  };
+  try {
+    const visitorData = req.body;
+    const newVisitor = await VisitorService.createVisitor(visitorData);
+    res.status(201).json({
+      message: 'Visitor created successfully',
+      data: newVisitor
+    });
+  } catch (error) {
+    console.error('Error in createVisitor:', error);
+    res.status(500).json({ message: 'Error creating visitor', error: error.message });
+  }
+};
 
-// Get all visitors
+// Fetch all visitors
 const getAllVisitors = async (req, res) => {
   try {
-    const visitors = await Visitor.findAll();
+    const visitors = await VisitorService.getAllVisitors();
     res.status(200).json(visitors);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error fetching visitors' });
+    console.error('Error in getAllVisitors:', error);
+    res.status(500).json({ message: 'Error fetching visitors', error: error.message });
   }
 };
 
@@ -59,95 +30,127 @@ const getAllVisitors = async (req, res) => {
 const getVisitorById = async (req, res) => {
   const { id } = req.params;
   try {
-    const visitor = await Visitor.findByPk(id);
+    const visitor = await VisitorService.getVisitorById(id);
     if (!visitor) {
       return res.status(404).json({ message: 'Visitor not found' });
     }
     res.status(200).json(visitor);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error fetching visitor' });
+    console.error('Error in getVisitorById:', error);
+    res.status(500).json({ message: 'Error fetching visitor', error: error.message });
+  }
+};
+
+// Get a visitor by mobile number
+const getVisitorByMobileNumber = async (req, res) => {
+  const { mobileNumber } = req.params;
+  try {
+    const visitor = await VisitorService.getVisitorByMobileNumber(mobileNumber);
+    if (!visitor) {
+      return res.status(404).json({ message: 'Visitor not found' });
+    }
+    res.status(200).json(visitor);
+  } catch (error) {
+    console.error('Error in getVisitorByMobileNumber:', error);
+    res.status(500).json({ message: 'Error fetching visitor', error: error.message });
   }
 };
 
 // Update visitor information
 const updateVisitor = async (req, res) => {
-    const { id } = req.params;
-    const { 
-      name, 
-      address, 
-      gender, 
-      visited,
-      date_of_birth, 
-      mobile_number, 
-      photo, 
-      pancard, 
-      aadhar_card_number, 
-      updated_by, 
-      whom_to_meet, 
-      purpose_of_meet, 
-      status, 
-      created_by // Assuming you want to update 'created_by' too
-    } = req.body;
-  
-    try {
-      // Update Visitor Information
-      const visitor = await Visitor.findByPk(id);
-      if (!visitor) {
-        return res.status(404).json({ message: 'Visitor not found' });
-      }
-  
-      await visitor.update({
-        name,
-        address,
-        gender,
-        date_of_birth,
-        mobile_number,
-        photo,
-        pancard,
-        aadhar_card_number,
-        updated_by,
-      });
-  
-      // Update VisitorEntry Information
-      const visitorEntry = await VisitorEntry.findOne({ where: { visitor_id: id } });
-      if (!visitorEntry) {
-        return res.status(404).json({ message: 'Visitor entry not found' });
-      }
-  
-      await visitorEntry.update({
-        whom_to_meet, 
-        purpose_of_meet,
-        visited,
-        status, // Update status field
-        created_by, // Optional: You can update the creator if needed
-      });
-  
-      res.status(201).json({
-        message: 'Visitor and visitor entry updated successfully!',
-        data: visitor,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error updating visitor and entry', error: error.message });
+  const { id } = req.params;
+  const updateData = req.body;
+
+  try {
+    // Ensure the 'photo' field is explicitly set to null if not present in the updateData
+    if (!updateData.hasOwnProperty('photo')) {
+      updateData.photo = null;
     }
-  };
-  
+
+    const updatedVisitor = await VisitorService.updateVisitor(id, updateData);
+    res.status(200).json({
+      message: 'Visitor updated successfully',
+      data: updatedVisitor,
+    });
+  } catch (error) {
+    console.error('Error in updateVisitor:', error);
+    res.status(500).json({
+      message: 'Error updating visitor',
+      error: error.message,
+    });
+  }
+};
+
+// Update visitor by mobile number
+const updateVisitorByMobileNumber = async (req, res) => {
+  const { mobileNumber } = req.params;
+  const updateData = req.body;
+
+  try {
+    // Handle the photo if it exists in the request
+    let photoFile = null;
+    if (req.files && req.files.photo) {
+      // Assuming the photo field name is 'photo' in the form-data
+      photoFile = req.files.photo;
+    }
+
+    // Call the service function to update the visitor
+    const updatedVisitor = await VisitorService.updateVisitorByMobileNumber(mobileNumber, updateData, photoFile);
+    
+    res.status(200).json({
+      message: 'Visitor updated successfully',
+      data: updatedVisitor,
+    });
+  } catch (error) {
+    console.error('Error in updateVisitorByMobileNumber:', error);
+    res.status(500).json({
+      message: 'Error updating visitor',
+      error: error.message,
+    });
+  }
+};
+
 
 // Delete visitor
 const deleteVisitor = async (req, res) => {
   const { id } = req.params;
   try {
-    const visitor = await Visitor.findByPk(id);
-    if (!visitor) {
-      return res.status(404).json({ message: 'Visitor not found' });
-    }
-
-    await visitor.destroy();
-    res.status(200).json({ message: 'Visitor deleted successfully' });
+    const result = await VisitorService.deleteVisitor(id);
+    res.status(200).json(result);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error deleting visitor' });
+    console.error('Error in deleteVisitor:', error);
+    res.status(500).json({ message: 'Error deleting visitor', error: error.message });
+  }
+};
+
+// Mark a visitor as visited
+const markAsVisited = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const updatedVisitor = await VisitorService.markAsVisited(id);
+    res.status(200).json({
+      message: 'Visitor marked as visited successfully',
+      data: updatedVisitor
+    });
+  } catch (error) {
+    console.error('Error in markAsVisited:', error);
+    res.status(500).json({ message: 'Error marking visitor as visited', error: error.message });
+  }
+};
+
+// Update OTP for a visitor
+const updateOTP = async (req, res) => {
+  const { id } = req.params;
+  const { otp } = req.body;
+  try {
+    const updatedVisitor = await VisitorService.updateOTP(id, otp);
+    res.status(200).json({
+      message: 'OTP updated successfully',
+      data: updatedVisitor
+    });
+  } catch (error) {
+    console.error('Error in updateOTP:', error);
+    res.status(500).json({ message: 'Error updating OTP', error: error.message });
   }
 };
 
@@ -155,6 +158,10 @@ module.exports = {
   createVisitor,
   getAllVisitors,
   getVisitorById,
+  getVisitorByMobileNumber, // Newly added method
   updateVisitor,
+  updateVisitorByMobileNumber, // Newly added method
   deleteVisitor,
+  markAsVisited,
+  updateOTP
 };

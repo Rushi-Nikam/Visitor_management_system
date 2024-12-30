@@ -1,10 +1,28 @@
 const express = require('express');
-const OtpController = require('../Controllers/otpController');
+const { body, validationResult } = require('express-validator'); // Middleware for request validation
+const loginController = require('../Controllers/authController'); // Import login controller
 
+const authRoute = express.Router();
 
-const otpRoute = express.Router();
+// Middleware for validating login request body
+const validateLogin = [
+  body('email').isEmail().withMessage('Invalid email format'),
+  body('password').notEmpty().withMessage('Password is required'),
+];
 
-// Route to sendOtp
-otpRoute.post('/send-otp', OtpController.sendOtp);
+// POST route for login
+authRoute.post(
+  '/login',
+  validateLogin,
+  (req, res, next) => {
+    // Validate request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.array() });
+    }
+    next(); // Proceed to controller if validation passes
+  },
+  loginController
+);
 
-module.exports = otpRoute;
+module.exports = authRoute;

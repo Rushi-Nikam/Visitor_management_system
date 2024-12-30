@@ -1,75 +1,90 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../db/db');
-const VisitorEntry = require('./VisitorEntry.model');  // Import the VisitorEntry model
+const sequelize = require('../db/db'); // Adjust this path to where your sequelize instance is configured
 
-const Visitors = sequelize.define('Visitors', {
+const Visitor = sequelize.define('Visitor', {
   id: {
     type: DataTypes.INTEGER,
-    autoIncrement: true,
     primaryKey: true,
+    autoIncrement: true
   },
   name: {
     type: DataTypes.STRING(100),
-    allowNull: false,
+    allowNull: false
   },
   address: {
     type: DataTypes.STRING(255),
-    allowNull: false,
+    allowNull: false
   },
   gender: {
     type: DataTypes.ENUM('Male', 'Female', 'Other'),
-    allowNull: false,
+    allowNull: false
+  },
+  photo: {
+    type: DataTypes.BLOB(),
+    defaultValue: null,
+    allowNull:true, 
   },
   date_of_birth: {
     type: DataTypes.DATEONLY,
-    allowNull: false,
+    allowNull: false
   },
   mobile_number: {
     type: DataTypes.STRING(15),
     allowNull: false,
-  },
-  photo: {
-    type: DataTypes.BLOB,
+    unique: true
   },
   pancard: {
     type: DataTypes.STRING(20),
+    defaultValue: null
   },
   aadhar_card_number: {
     type: DataTypes.STRING(20),
+    defaultValue: null
+  },
+  whom_to_meet: {
+    type: DataTypes.STRING(100),
+    allowNull: false
+  },
+  purpose_of_meet: {
+    type: DataTypes.STRING(255),
+    allowNull: false
+  },
+  visiting_date: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  otp: {
+    type: DataTypes.STRING(6),
+    defaultValue: null
+  },
+  status: {
+    type: DataTypes.ENUM('active', 'inactive', 'pending'),
+    defaultValue: 'pending'
+  },
+  visited: {
+    type: DataTypes.ENUM('Yes', 'No'),
+    defaultValue: 'No'
   },
   created_by: {
     type: DataTypes.STRING(100),
-    allowNull: false,
+    allowNull: true
   },
   created_date: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+    defaultValue: DataTypes.NOW
   },
   updated_by: {
     type: DataTypes.STRING(100),
+    allowNull: true
   },
   updated_date: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
-  },
-}, {
-  timestamps: false,
-});
-
-Visitors.afterCreate(async (visitors, options) => {
-  try {
-    
-    await VisitorEntry.create({
-      visitor_id: visitors.id, 
-      visited: 'No', 
-      whom_to_meet: visitors.whom_to_meet, 
-      purpose_of_meet: visitors.purpose_of_meet, 
-      status: 'pending',
-      created_by: visitors.created_by,
-    });
-  } catch (error) {
-    console.error('Error creating visitor entry:', error);
+    onUpdate: DataTypes.NOW
   }
+}, {
+  tableName: 'visitors', // Explicitly define the table name
+  timestamps: false // Disable automatic timestamps if using custom created/updated fields
 });
 
-module.exports = Visitors;
+module.exports = Visitor;

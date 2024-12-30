@@ -67,4 +67,67 @@ const createUser = async (req, res) => {
   }
 };
 
-module.exports = createUser;
+// Function to update an existing user
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, roleid, email, password, phone } = req.body;
+
+    // Check if the user exists
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Update user details
+    if (name) user.name = name;
+    if (roleid) user.roleid = roleid;
+    if (email) user.email = email;
+    if (phone) user.phone = phone;
+
+    // Hash the password if it needs updating
+    if (password) {
+      user.password = await bcrypt.hash(password, 10);
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'User updated successfully',
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        roleid: user.roleid,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: 'Error updating user',
+    });
+  }
+};
+
+// Function to delete a user
+const deleteUser = async (userId) => {
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    await user.destroy(); // Deletes the user from the database
+  } catch (err) {
+    console.error(err);
+    throw new Error("Error deleting user from the database");
+  }
+};
+
+module.exports = { createUser, updateUser, deleteUser };
