@@ -21,15 +21,21 @@ const createVisitor = async (req, res) => {
 };
 
 // Fetch all visitors
+// Controller: VisitorController.js
 const getAllVisitors = async (req, res) => {
   try {
-    const visitors = await VisitorService.getAllVisitors();
+    const adminId = req.query.adminid;
+    if (!adminId) {
+      return res.status(400).json({ message: 'Admin ID is required' });
+    }
+    const visitors = await VisitorService.getAllVisitors(adminId);
     res.status(200).json(visitors);
   } catch (error) {
     console.error('Error in getAllVisitors:', error);
     res.status(500).json({ message: 'Error fetching visitors', error: error.message });
   }
 };
+
 
 // Get a specific visitor by ID
 const getVisitorById = async (req, res) => {

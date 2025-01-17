@@ -3,6 +3,7 @@ const sharp = require('sharp'); // For image manipulation (if required)
 const path = require('path');
 const fs = require('fs');
 const { sendOtp } = require('../Services/otpService'); 
+const { where } = require('sequelize');
 // Service to create a new visitor
 const createVisitor = async ({
   name,
@@ -54,14 +55,19 @@ const createVisitor = async ({
 
 
 // Service to fetch all visitors
-const getAllVisitors = async () => {
+const getAllVisitors = async (adminId) => {
   try {
-    const visitors = await Visitor.findAll(); // Fetch all visitors
+    const visitors = await Visitor.findAll({
+      where: {
+        adminId: adminId  // Filter by adminId
+      }
+    });
     return visitors;
   } catch (error) {
     throw new Error('Error fetching visitors: ' + error.message);
   }
 };
+
 
 // Service to fetch a specific visitor by ID
 const getVisitorById = async (id) => {

@@ -81,6 +81,14 @@ const Visitor = sequelize.define('Visitor', {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
     onUpdate: DataTypes.NOW
+  },
+  adminId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'users', // Adjust this to match your actual User model
+      key: 'id'
+    },
+    allowNull: false
   }
 }, {
   tableName: 'visitors', // Explicitly define the table name
