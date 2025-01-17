@@ -1,14 +1,21 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const user = useSelector((state) => state.user);
+  const location = useLocation();
+  const token = localStorage.getItem('Auth'); // Token fallback
+  const role = user?.role || JSON.parse(localStorage.getItem('role'));
 
-  if (!isAuthenticated) {
-    // alert('You must be logged in to access this page!');
-    return <Navigate to={'/'}/>
+  if (!token) {
+    return <Navigate to="/" replace state={{ from: location }} />;
   }
+
+  if (allowedRoles && !allowedRoles.includes(role)) {
+    return <p>Page not Found</p>
+  }
+
   return children;
 };
 

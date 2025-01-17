@@ -1,34 +1,31 @@
 import React, { useState, useEffect } from 'react';
 
-const VisitorForm = ({  submitUrl, initialData, onSuccess }) => {
- const [formData, setFormData] = useState({
-  name: "",
-  address: "",
-  gender: "",
-  date_of_birth: "",
-  mobile_number: "",
-  pancard: "",
-  aadhar_card_number: "",
-  whom_to_meet: "",
-  purpose_of_meet: "",
-  visiting_date: "", 
+const VisitorForm = ({ submitUrl, initialData, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    address: "",
+    gender: "",
+    date_of_birth: "",
+    mobile_number: "",
+    pancard: "",
+    aadhar_card_number: "",
+    whom_to_meet: "",
+    purpose_of_meet: "",
+    visiting_date: "",
   });
 
   const userFields = [
-    { label: 'Name', name: 'name', type: 'text', required: true },
-    { label: 'address', name: 'address', type: 'text', required: true },
-    { label: 'gender', name: 'gender', type: 'text', required: true }, // Only required if creating a user
-    { label: 'date of birth', name: 'date_of_birth', type: 'date', required: true },
-    { label: 'mobile number', name: 'mobile_number', type: 'text', required: true },
-    { label: 'pancard', name: 'pancard', type: 'text', required: true },
-    { label: 'aadhar card', name: 'aadhar_card_number', type: 'text', required: false },
-    { label: 'whom to meet', name: 'whom_to_meet', type: 'text', required: true },
-    { label: 'purpose of meet', name: 'purpose_of_meet', type: 'text', required: true },
-    { label: 'visiting date', name: 'visiting_date', type: 'date', required: true },
+    { label: "Name", name: "name", type: "text", required: true },
+    { label: "Address", name: "address", type: "text", required: true },
+    { label: "Gender", name: "gender", type: "text", required: true },
+    { label: "Date of Birth", name: "date_of_birth", type: "date", required: true },
+    { label: "Mobile Number", name: "mobile_number", type: "text", required: true },
+    { label: "Pancard", name: "pancard", type: "text", required: true },
+    { label: "Aadhar Card", name: "aadhar_card_number", type: "text", required: false },
+    { label: "Whom to Meet", name: "whom_to_meet", type: "text", required: true },
+    { label: "Purpose of Meet", name: "purpose_of_meet", type: "text", required: true },
+    { label: "Visiting Date", name: "visiting_date", type: "date", required: true },
   ];
-
-
-  const fields=userFields;
 
   // Set initial data for form fields
   useEffect(() => {
@@ -58,38 +55,38 @@ const VisitorForm = ({  submitUrl, initialData, onSuccess }) => {
 
     try {
       const response = await fetch(submitUrl, {
-        method: initialData ? 'PUT' : 'POST', // Use PUT for update, POST for create
+        method: initialData ? "PUT" : "POST", // Use PUT for update, POST for create
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData }), // Include the generated OTP in the request body
       });
 
       const data = await response.json();
 
       if (data) {
-        alert(`Visitor ${initialData ? 'updated' : 'created'} successfully!`);
-        setFormData({}); 
-        onSuccess(); 
+        alert(`Visitor ${initialData ? "updated" : "created"} successfully`);
+        setFormData({});
+        onSuccess();
       } else {
-        alert('Error occurred while creating/updating user/visitor.');
+        alert("Error occurred while creating/updating user/visitor.");
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('There was an error creating/updating the user/visitor.');
+      console.error("Error:", error);
+      alert("There was an error creating/updating the user/visitor.");
     }
   };
 
   return (
     <div className="max-w-lg mx-auto mt-10 p-8 rounded-lg shadow-lg">
       <h2 className="text-2xl font-semibold mb-6 text-center">
-        {`${initialData ? 'Update Visitor' : 'Register Visitor'}`}
+        {`${initialData ? "Update Visitor" : "Register Visitor"}`}
       </h2>
       <form
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-8 shadow-lg rounded-lg border border-gray-200"
       >
-        {fields.map((field) => (
+        {userFields.map((field) => (
           <div key={field.name} className="mb-6">
             <label
               htmlFor={field.name}
@@ -101,7 +98,7 @@ const VisitorForm = ({  submitUrl, initialData, onSuccess }) => {
               type={field.type}
               name={field.name}
               id={field.name}
-              value={formData[field.name] || ''}
+              value={formData[field.name] || ""}
               onChange={handleChange}
               required={field.required}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"

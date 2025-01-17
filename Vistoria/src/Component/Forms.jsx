@@ -7,6 +7,7 @@ const Forms = ({ formType, submitUrl, initialData, onSuccess }) => {
     password: '',
     phone: '',
     roleid: '',
+    role_name: '', // Added role_name
     created_by: '',
   });
 
@@ -15,19 +16,10 @@ const Forms = ({ formType, submitUrl, initialData, onSuccess }) => {
     { label: 'Email', name: 'email', type: 'email', required: true },
     { label: 'Password', name: 'password', type: 'password', required: !initialData }, // Only required if creating a user
     { label: 'Phone', name: 'phone', type: 'tel', required: true },
-    { label: 'Role', name: 'roleid', type: 'text', required: true },
+    { label: 'Role ID', name: 'roleid', type: 'text', required: true },
+    { label: 'Role Name', name: 'role_name', type: 'text', required: true }, // Added role_name field
     { label: 'Created By', name: 'created_by', type: 'text', required: false },
   ];
-
-  const visitorFields = [
-    { label: 'Name', name: 'name', type: 'text', required: true },
-    { label: 'Email', name: 'email', type: 'email', required: true },
-    { label: 'Phone', name: 'phone', type: 'tel', required: true },
-    { label: 'Purpose', name: 'purpose', type: 'text', required: true },
-    { label: 'Visit Date', name: 'visit_date', type: 'date', required: true },
-  ];
-
-  const fields = formType === 'user' ? userFields : visitorFields;
 
   // Set initial data for form fields
   useEffect(() => {
@@ -88,7 +80,7 @@ const Forms = ({ formType, submitUrl, initialData, onSuccess }) => {
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-8 shadow-lg rounded-lg border border-gray-200"
       >
-        {fields.map((field) => (
+        {userFields.map((field) => (
           <div key={field.name} className="mb-6">
             <label
               htmlFor={field.name}

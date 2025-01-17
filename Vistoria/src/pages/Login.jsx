@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../redux/Slices/UserSlice'; // Import the action
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -22,24 +22,16 @@ const Login = () => {
   // Handle form submission
   const login = async (e) => {
     e.preventDefault();
-
-    // Client-side validation
+  
+    // Client-side validation (as you already implemented)
     if (!form.email || !form.password) {
       setError('Both email and password are required');
       return;
     }
-
-    // Email pattern validation
-    const emailPattern = /\S+@\S+\.\S+/;
-    if (!emailPattern.test(form.email)) {
-      setError('Please enter a valid email address');
-      return;
-    }
-
-    setIsLoading(true); // Set loading state to true
-
+  
+    setIsLoading(true);
+  
     try {
-      // Send POST request to backend
       const response = await fetch('http://localhost:3000/api/auth/login', {
         method: 'POST',
         headers: {
@@ -47,29 +39,22 @@ const Login = () => {
         },
         body: JSON.stringify(form),
       });
-
+  
       const data = await response.json();
-
-      // If the response is not OK, show an error
+  
       if (!response.ok) {
         setError(data.message || 'Login failed');
         setIsLoading(false);
         return;
       }
-      dispatch(setUser({
-        token: data.token, // Token from response
-        role: data.user.role, // Role from response
-        user: data.user, 
-          }));
-
-      // Store the token and user info in localStorage
+  
+      // Save user data and token
+      dispatch(setUser({ token: data.token, role: data.user.role, user: data.user }));
       localStorage.setItem('Auth', data.token);
       localStorage.setItem('role', JSON.stringify(data.user.role));
-
-      // Dispatch action to set the user data in Redux store
-
-    
-      // Redirect based on user role
+      localStorage.setItem('user', JSON.stringify({ token: data.token, role: data.user.role, user: data.user }));
+  
+      // Redirect to the respective dashboard
       switch (data.user.role) {
         case 'SuperAdmin':
           navigate('/superAdmin-dashboard');
@@ -87,9 +72,11 @@ const Login = () => {
     } catch (err) {
       console.error(err);
       setError('An error occurred. Please try again.');
-      setIsLoading(false); // Reset loading state
+    } finally {
+      setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="flex py-[50px] justify-center items-center">
@@ -144,6 +131,12 @@ const Login = () => {
                   {isLoading ? 'Logging In...' : 'Log In'}
                 </button>
               </form>
+
+              <div className="mt-4 text-center">
+                <p>
+                  Don't have an account? <Link to={`/register`} className="text-blue-500">Register here</Link>.
+                </p>
+              </div>
             </div>
 
             <div className="flex-1 flex justify-center items-center border-l-2">

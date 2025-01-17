@@ -129,7 +129,7 @@ const Superadmin_dash = () => {
               <tr>
                 <th className="px-4 py-2 border border-gray-300 text-left">ID</th>
                 <th className="px-4 py-2 border border-gray-300 text-left">Name</th>
-                <th className="px-4 py-2 border border-gray-300 text-left">Role ID</th>
+                <th className="px-4 py-2 border border-gray-300 text-left">Role Name</th>
                 <th className="px-4 py-2 border border-gray-300 text-left">Email</th>
                 <th className="px-4 py-2 border border-gray-300 text-left">Phone</th>
                 <th className="px-4 py-2 border border-gray-300 text-left">Created by</th>
@@ -141,7 +141,8 @@ const Superadmin_dash = () => {
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-4 py-2 border border-gray-300">{index + 1}</td>
                   <td className="px-4 py-2 border border-gray-300">{user.name}</td>
-                  <td className="px-4 py-2 border border-gray-300">{user.roleid}</td>
+                  {/* <td className="px-4 py-2 border border-gray-300">{user.roleid}</td> */}
+                  <td className="px-4 py-2 border border-gray-300">{user.role_name}</td>
                   <td className="px-4 py-2 border border-gray-300">{user.email}</td>
                   <td className="px-4 py-2 border border-gray-300">{user.phone}</td>
                   <td className="px-4 py-2 border border-gray-300">{user.created_by}</td>

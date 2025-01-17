@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 // import { useSelector } from 'react-redux'; // Import Redux hook
 import Home from './pages/Home';
-import RegisterPage from './pages/RegisterPage';
 import Login from './pages/Login';
 import VisitorsList from './pages/VisitorsList';
 import Navbar from './Component/Navbar';
@@ -11,31 +10,56 @@ import Admin_dash from './pages/Admin_dash';
 import Operator_dash from './pages/Operator_dash';
 import Logout from './pages/Logout';
 import ProtectedRoute from './Component/ProtectedRoute';
+import UserForm from './Component/UserForm';
+
 
 const Routers = () => {
-  // const isAuthenticated = useSelector((state) => state.user.isAuthenticated); // Access authentication status
-
+  
   return (
     <>
-      {/* Conditionally render Navbar if the user is authenticated */}
+    
        <Navbar />
 
-      <Routes>
-        {/* Define the protected routes */}
-        <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-        <Route path="/register" element={<ProtectedRoute><RegisterPage /></ProtectedRoute>} />
-        <Route path="/superAdmin-dashboard" element={<ProtectedRoute><Superadmin_dash /></ProtectedRoute>} />
-        <Route path="/Admin-dashboard" element={<ProtectedRoute><Admin_dash /></ProtectedRoute>} />
-        <Route path="/Operator-dashboard" element={<ProtectedRoute><Operator_dash /></ProtectedRoute>} />
-        <Route path="/just" element={<ProtectedRoute><VisitorsList /></ProtectedRoute>} />
-        <Route path="/logout" element={<Logout />} />
+       <Routes>
+  <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+  <Route path="/register" element={<UserForm />} />
 
-        {/* Login route */}
-        <Route path="/" element={<Login />} />
+  {/* SuperAdmin Dashboard */}
+  <Route 
+    path="/superAdmin-dashboard" 
+    element={
+      <ProtectedRoute allowedRoles={['SuperAdmin']}>
+        <Superadmin_dash />
+      </ProtectedRoute>
+    } 
+  />
 
-        {/* 404 route */}
-        <Route path="*" element={<div>404 - Page not found</div>} />
-      </Routes>
+  {/* Admin Dashboard */}
+  <Route 
+    path="/Admin-dashboard" 
+    element={
+      <ProtectedRoute allowedRoles={['Admin']}>
+        <Admin_dash />
+      </ProtectedRoute>
+    } 
+  />
+
+  {/* Operator Dashboard */}
+  <Route 
+    path="/Operator-dashboard" 
+    element={
+      <ProtectedRoute allowedRoles={['Operator']}>
+        <Operator_dash />
+      </ProtectedRoute>
+    } 
+  />
+
+  <Route path="/just" element={<ProtectedRoute><VisitorsList /></ProtectedRoute>} />
+  <Route path="/logout" element={<Logout />} />
+  <Route path="/" element={<Login />} />
+  <Route path="*" element={<div>404 - Page not found</div>} />
+</Routes>
+
     </>
   );
 };

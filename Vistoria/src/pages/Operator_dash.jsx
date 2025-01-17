@@ -1,15 +1,18 @@
-import React, { useState,useRef } from "react";
+import React, { useState, useRef } from "react";
 import Webcam from "react-webcam";
+
 const Operator_dash = () => {
   const [mobileNumber, setMobileNumber] = useState("");
+  const [otp,setotp]=useState("");
   const [visitor, setVisitor] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false); // Track editing state
   const [updatedVisitor, setUpdatedVisitor] = useState({}); // Store updated visitor data
   const [successMessage, setSuccessMessage] = useState(null); // State for success message
-const [photo ,setphoto]=useState(null);
- const webcamRef = useRef(null);
+  const [photo, setPhoto] = useState(null); // Store photo file
+  const webcamRef = useRef(null);
+
   // Fetch visitor by mobile number
   const fetchVisitorByMobileNumber = async () => {
     setLoading(true);
@@ -18,28 +21,13 @@ const [photo ,setphoto]=useState(null);
     setSuccessMessage(null); // Reset success message when new search is made
     try {
       const response = await fetch(
-        `http://localhost:3000/api/visit/visitor/${mobileNumber}`
+        `http://localhost:3000/api/visit/visitor/otp/${otp}`
       );
       if (!response.ok) {
         throw new Error(`Visitor not found. HTTP status: ${response.status}`);
       }
       const data = await response.json();
-      if (data.photo && Array.isArray(data.photo)) {
-        const byteArray = new Uint8Array(data.photo); // Create a Uint8Array from the byte array
-        const blob = new Blob([byteArray], { type: 'image/png' }); // Create a Blob with PNG type
-      
-        // Convert Blob to Base64 string
-        const base64Photo = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result); // Resolve Base64 string
-          reader.readAsDataURL(blob); // Convert Blob to Base64
-        });
-      
-        data.photo = base64Photo; // Replace the byte array with the Base64 string
-      }
-      
       setVisitor(data);
-      console.log({data});
       setUpdatedVisitor(data); // Initialize the updatedVisitor with fetched data
     } catch (error) {
       console.error("Error fetching visitor:", error);
@@ -48,15 +36,19 @@ const [photo ,setphoto]=useState(null);
       setLoading(false);
     }
   };
+
   const capturePhoto = () => {
     const imageSrc = webcamRef.current.getScreenshot();
-    fetch(imageSrc)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const file = new File([blob], "photo.png", { type: "image/png" });
-        setphoto(file);
-      });
+    if (imageSrc) {
+      fetch(imageSrc)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const file = new File([blob], "photo.png", { type: "image/png" });
+          setPhoto(file); // Save the file object, not base64 string
+        });
+    }
   };
+
   // Handle field changes in the edit form
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,41 +63,36 @@ const [photo ,setphoto]=useState(null);
     setLoading(true);
     setError(null);
     setSuccessMessage(null); // Reset success message before saving
-  
+
     try {
-      // Include the photo in the updated visitor details
-      const visitorWithPhoto = {
-        ...updatedVisitor,
-        photo, // Ensure `photo` contains the Base64 string or file URL
-      };
-  
+      const formData = new FormData();
+      formData.append("name", updatedVisitor.name);
+      formData.append("mobile_number", updatedVisitor.mobile_number);
+      formData.append("purpose_of_meet", updatedVisitor.purpose_of_meet);
+      formData.append("status", updatedVisitor.status);
+      formData.append("visited", updatedVisitor.visited);
+      if (photo) {
+        formData.append("photo", photo); // Add photo file to the form data
+      }
+
       const response = await fetch(
-        `http://localhost:3000/api/visit/visitor/${mobileNumber}`,
+        `http://localhost:3000/api/visit/visitor/otp/${otp}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(visitorWithPhoto),
+          body: formData, // Send FormData with photo
         }
       );
-  
+
       if (!response.ok) {
         throw new Error("Failed to update visitor details");
       }
-  
+
       const data = await response.json();
       setVisitor(data); // Update the visitor state with the new data
-      // console.log({ data });
       setIsEditing(false); // Switch back to view mode after saving
-      setSuccessMessage("Visitor updated successfully!"); // Show success message
-  
-      // Clear the search box and reset states
-      setMobileNumber("");
-      setUpdatedVisitor({});
-      setphoto(""); // Reset photo after saving
-  
-      // Show success alert and reset the success message after 3 seconds
+      console.log(data);
+      setSuccessMessage("Visitor updated successfully!");
+
       setTimeout(() => {
         setSuccessMessage(null);
       }, 1000);
@@ -116,7 +103,7 @@ const [photo ,setphoto]=useState(null);
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <h1 className="text-2xl font-bold text-center mb-6">Visitor Details</h1>
@@ -124,9 +111,9 @@ const [photo ,setphoto]=useState(null);
         <div className="flex items-center space-x-4">
           <input
             type="text"
-            placeholder="Enter Mobile Number"
-            value={mobileNumber}
-            onChange={(e) => setMobileNumber(e.target.value)}
+            placeholder="Enter OTP Number"
+            value={otp}
+            onChange={(e) => setotp(e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
@@ -144,7 +131,6 @@ const [photo ,setphoto]=useState(null);
       {successMessage && (
         <p className="text-center text-green-600">{successMessage}</p>
       )}
-      {/* Success message */}
       {visitor && !isEditing && (
         <div className="overflow-x-auto">
           <table className="w-full table-auto border-collapse border border-gray-300">
@@ -153,33 +139,28 @@ const [photo ,setphoto]=useState(null);
                 <th className="border border-gray-300 px-4 py-2">ID</th>
                 <th className="border border-gray-300 px-4 py-2">Photo</th>
                 <th className="border border-gray-300 px-4 py-2">Name</th>
-                <th className="border border-gray-300 px-4 py-2">
-                  Mobile Number
-                </th>
+                <th className="border border-gray-300 px-4 py-2">Mobile Number</th>
                 <th className="border border-gray-300 px-4 py-2">Purpose</th>
                 <th className="border border-gray-300 px-4 py-2">Status</th>
-                <th className="border border-gray-300 px-4 py-2">visited</th>
+                <th className="border border-gray-300 px-4 py-2">Visited</th>
                 <th className="border border-gray-300 px-4 py-2">Action</th>
               </tr>
             </thead>
             <tbody>
               <tr>
+                <td className="border border-gray-300 px-4 py-2">{visitor.id}</td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {visitor.id}
+                  {visitor.photo ? (
+                    <img
+                      src={`http://localhost:3000${visitor.photo}`} // Use correct path to photo
+                      alt={`${visitor.name}'s photo`}
+                      style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                    />
+                  ) : (
+                    <span>No photo available</span>
+                  )}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
-                {photo ? <img src={URL.createObjectURL(photo)} alt="Visitor" width="50" height="50" /> : 
-                visitor.photo && (
-      <img
-        src={visitor.photo} // This will work for Base64 strings or file URLs
-        alt={`${visitor.name}'s photo`}
-        style={{ width: "150px", height: "150px", objectFit: "cover" }}
-      />
-    )}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {visitor.name}
-                </td>
+                <td className="border border-gray-300 px-4 py-2">{visitor.name}</td>
                 <td className="border border-gray-300 px-4 py-2">
                   {visitor.mobile_number}
                 </td>
@@ -192,7 +173,6 @@ const [photo ,setphoto]=useState(null);
                 <td className="border border-gray-300 px-4 py-2">
                   {visitor.visited}
                 </td>
-
                 <td className="border border-gray-300 px-4 py-2">
                   <button
                     onClick={() => setIsEditing(true)}
@@ -212,20 +192,40 @@ const [photo ,setphoto]=useState(null);
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Photo 
+                Photo
               </label>
-              <input
-                type="text"
-                name="photo"
-                value={photo || " "}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="my-4">
+                <Webcam
+                  audio={false}
+                  ref={webcamRef}
+                  screenshotFormat="image/png"
+                  width="300"
+                  height="200"
+                  videoConstraints={{ facingMode: "user" }}
+                />
+                <div className="mt-2">
+                  <button
+                    type="button"
+                    onClick={capturePhoto}
+                    className="bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 focus:outline-none"
+                  >
+                    Capture Photo
+                  </button>
+                </div>
+              </div>
+              {photo && (
+                <div className="mt-4">
+                  <h3 className="text-sm font-medium text-gray-700">Captured Photo</h3>
+                  <img
+                    src={URL.createObjectURL(photo)} // Display the captured photo
+                    alt="Captured"
+                    className="mt-2 w-40 h-40 object-cover rounded-md"
+                  />
+                </div>
+              )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Name
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Name</label>
               <input
                 type="text"
                 name="name"
@@ -259,9 +259,7 @@ const [photo ,setphoto]=useState(null);
               />
             </div>
             <div>
-               <label className="block text-sm font-medium text-gray-700">
-               Status
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Status</label>
               <input
                 type="text"
                 name="status"
@@ -271,9 +269,7 @@ const [photo ,setphoto]=useState(null);
               />
             </div>
             <div>
-               <label className="block text-sm font-medium text-gray-700">
-               visited
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Visited</label>
               <input
                 type="text"
                 name="visited"
@@ -282,34 +278,15 @@ const [photo ,setphoto]=useState(null);
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-             <div className="my-4 ">
-                      <Webcam
-                        audio={false}
-                        ref={webcamRef}
-                        screenshotFormat="image/png"
-                        width="300"
-                        height="200"
-                        videoConstraints={{ facingMode: "user" }}
-                      />
-                      <div className="mt-2">
-                        <button
-                          type="button"
-                          onClick={capturePhoto}
-                          className="bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 focus:outline-none"
-                        >
-                          Capture Photo
-                        </button>
-                      </div>
-                    </div>
-            <div className="flex space-x-4">
+            <div className="flex justify-between mt-6">
               <button
                 onClick={handleSave}
-                className="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
+                className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
               >
                 Save Changes
               </button>
               <button
-                onClick={() => setIsEditing(false)} // Cancel and return to viewing mode
+                onClick={() => setIsEditing(false)}
                 className="px-6 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition"
               >
                 Cancel

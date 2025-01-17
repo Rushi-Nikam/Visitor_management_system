@@ -1,24 +1,25 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter } from 'react-router-dom';
-// import { useDispatch } from 'react-redux';
-// import { setUser } from './redux/Slices/UserSlice'; // Import action
-// import Navbar from './Component/Navbar';
+import { BrowserRouter, useNavigate } from 'react-router-dom';
 import Routers from './Routers';
 
+const AppContent = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const lastPath = localStorage.getItem('lastPath');
+    const token = localStorage.getItem('Auth');
+    if (token && lastPath) {
+      navigate(lastPath);
+    }
+  }, []);
+
+  return <Routers />;
+};
+
 const App = () => {
-  // const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   const token = localStorage.getItem('Auth');
-  //   if (token) {
-  //     // Optionally fetch user details with the token or restore state
-  //     dispatch(setUser({ token, user: { role: "user" } }));
-  //   }
-  // }, [dispatch]);
-
   return (
     <BrowserRouter>
-      <Routers />
+      <Routers/>
     </BrowserRouter>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const UserForm = ({ submitUrl }) => {
+const UserForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     roleid: '',
@@ -30,7 +30,7 @@ const UserForm = ({ submitUrl }) => {
     }
 
     try {
-      const response = await fetch(submitUrl, {
+      const response = await fetch(`http://localhost:3000/api/user/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,6 +45,7 @@ const UserForm = ({ submitUrl }) => {
         setFormData({
           name: '',
           roleid: '',
+          
           email: '',
           password: '',
           phone: '',
