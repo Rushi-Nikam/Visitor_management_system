@@ -1,9 +1,14 @@
 const VisitorService = require('../Services/VisitorService');
-
+const path = require('path');
+const fs = require('fs');
 // Create a new visitor
 const createVisitor = async (req, res) => {
   try {
     const visitorData = req.body;
+    if (req.file) {
+      visitorData.photo = `/uploads/${req.file.filename}`;
+    }
+
     const newVisitor = await VisitorService.createVisitor(visitorData);
     res.status(201).json({
       message: 'Visitor created successfully',
@@ -55,6 +60,19 @@ const getVisitorByMobileNumber = async (req, res) => {
     res.status(500).json({ message: 'Error fetching visitor', error: error.message });
   }
 };
+const getVisitorByOtp = async (req, res) => {
+  const { otp } = req.params;
+  try {
+    const visitor = await VisitorService.getVisitorByOtp(otp);
+    if (!visitor) {
+      return res.status(404).json({ message: 'Visitor not found' });
+    }
+    res.status(200).json(visitor);
+  } catch (error) {
+    console.error('Error in getVisitorByMobileNumber:', error);
+    res.status(500).json({ message: 'Error fetching visitor', error: error.message });
+  }
+};
 
 // Update visitor information
 const updateVisitor = async (req, res) => {
@@ -63,8 +81,8 @@ const updateVisitor = async (req, res) => {
 
   try {
     // Ensure the 'photo' field is explicitly set to null if not present in the updateData
-    if (!updateData.hasOwnProperty('photo')) {
-      updateData.photo = null;
+    if (req.file) {
+      updateData.photo = `/uploads/${req.file.filename}`;
     }
 
     const updatedVisitor = await VisitorService.updateVisitor(id, updateData);
@@ -87,16 +105,30 @@ const updateVisitorByMobileNumber = async (req, res) => {
   const updateData = req.body;
 
   try {
-    // Handle the photo if it exists in the request
-    let photoFile = null;
-    if (req.files && req.files.photo) {
-      // Assuming the photo field name is 'photo' in the form-data
-      photoFile = req.files.photo;
+    const existingVisitor = await VisitorService.getVisitorByMobileNumber(mobileNumber);
+
+    if (!existingVisitor) {
+      return res.status(404).json({ message: 'Visitor not found' });
     }
 
-    // Call the service function to update the visitor
-    const updatedVisitor = await VisitorService.updateVisitorByMobileNumber(mobileNumber, updateData, photoFile);
-    
+    // Check if a new photo is uploaded
+    if (req.file) {
+      updateData.photo = `/uploads/${req.file.filename}`;
+
+      // Delete the old photo if it exists
+      if (existingVisitor.photo) {
+        const oldPhotoPath = path.join(__dirname, `../${existingVisitor.photo}`);
+        fs.unlink(oldPhotoPath, (err) => {
+          if (err) {
+            console.error('Error deleting old photo:', err);
+          }
+        });
+      }
+    }
+
+    // Call the service function to update the visitor with the new data
+    const updatedVisitor = await VisitorService.updateVisitorByMobileNumber(mobileNumber, updateData);
+
     res.status(200).json({
       message: 'Visitor updated successfully',
       data: updatedVisitor,
@@ -110,6 +142,47 @@ const updateVisitorByMobileNumber = async (req, res) => {
   }
 };
 
+const updateVisitorByOtp = async (req, res) => {
+  const { otp } = req.params;
+  const updateData = req.body;
+
+  try {
+    const existingVisitor = await VisitorService.getVisitorByOtp(otp);
+
+    if (!existingVisitor) {
+      return res.status(404).json({ message: 'Visitor not found' });
+    }
+
+    // Check if a new photo is uploaded
+    if (req.file) {
+      updateData.photo = `/uploads/${req.file.filename}`;
+
+      // Delete the old photo if it exists
+      if (existingVisitor.photo) {
+        const oldPhotoPath = path.join(__dirname, `../${existingVisitor.photo}`);
+        fs.unlink(oldPhotoPath, (err) => {
+          if (err) {
+            console.error('Error deleting old photo:', err);
+          }
+        });
+      }
+    }
+
+    // Call the service function to update the visitor with the new data
+    const updatedVisitor = await VisitorService.updateVisitorByOtp(otp, updateData);
+
+    res.status(200).json({
+      message: 'Visitor updated successfully',
+      data: updatedVisitor,
+    });
+  } catch (error) {
+    console.error('Error in updateVisitorByMobileNumber:', error);
+    res.status(500).json({
+      message: 'Error updating visitor',
+      error: error.message,
+    });
+  }
+};
 
 // Delete visitor
 const deleteVisitor = async (req, res) => {
@@ -158,9 +231,11 @@ module.exports = {
   createVisitor,
   getAllVisitors,
   getVisitorById,
-  getVisitorByMobileNumber, // Newly added method
+  getVisitorByMobileNumber, 
+  getVisitorByOtp,
   updateVisitor,
-  updateVisitorByMobileNumber, // Newly added method
+  updateVisitorByMobileNumber,
+  updateVisitorByOtp,
   deleteVisitor,
   markAsVisited,
   updateOTP

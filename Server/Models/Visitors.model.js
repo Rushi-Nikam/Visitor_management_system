@@ -20,7 +20,7 @@ const Visitor = sequelize.define('Visitor', {
     allowNull: false
   },
   photo: {
-    type: DataTypes.BLOB(),
+    type: DataTypes.STRING(255),
     defaultValue: null,
     allowNull:true, 
   },
@@ -54,7 +54,7 @@ const Visitor = sequelize.define('Visitor', {
     allowNull: false
   },
   otp: {
-    type: DataTypes.STRING(6),
+    type: DataTypes.STRING(4),
     defaultValue: null
   },
   status: {

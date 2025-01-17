@@ -3,13 +3,13 @@ const axioses = require('axios');
 // const http = require('https');
 
 
-const sendOtp = async (otp) => {
+const sendOtp = async (otp,mobile_number) => {
     let body = {
         "route": "q",
         "message": "Otp " + otp + " visitor invitation at PR tech",
         "schedule_time": null,
         "flash": 0,
-        "numbers": "8796618992",
+        "numbers": mobile_number,
     }
 
     await axioses({

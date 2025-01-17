@@ -25,6 +25,10 @@ const User = db.define('User', {
     type: DataTypes.STRING(15),
     allowNull: false,
   },
+  role_name:{
+    type:DataTypes.STRING(100),
+    allowNull:false,
+  } ,
   roleid: {
     type: DataTypes.INTEGER,
     allowNull: true,

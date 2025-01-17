@@ -4,10 +4,10 @@ const User = require('../Models/User.model');
 // Function to create a new user
 const createUser = async (req, res) => {
   try {
-    const { name, roleid, email, password, phone, created_by } = req.body;
+    const { name, roleid,role_name, email, password, phone, created_by } = req.body;
 
     // Validate required fields
-    if (!name || !roleid || !email || !password || !phone || !created_by) {
+    if (!name || !roleid || !role_name || !email || !password || !phone || !created_by) {
       return res.status(400).json({ 
         success: false, 
         message: 'All fields are required' 
@@ -33,6 +33,7 @@ const createUser = async (req, res) => {
       password: hashedPassword, // Store the hashed password
       phone,
       roleid,
+      role_name,
       created_by, // Track who created the user
     });
 
@@ -45,6 +46,7 @@ const createUser = async (req, res) => {
         email: newUser.email,
         phone: newUser.phone,
         roleid: newUser.roleid,
+        role_name:newUser.role_name,
         created_by: newUser.created_by,
       }, // Exclude sensitive data like hashed password
     });
@@ -71,7 +73,7 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, roleid, email, password, phone } = req.body;
+    const { name, roleid,role_name, email, password, phone } = req.body;
 
     // Check if the user exists
     const user = await User.findByPk(id);
@@ -87,7 +89,7 @@ const updateUser = async (req, res) => {
     if (roleid) user.roleid = roleid;
     if (email) user.email = email;
     if (phone) user.phone = phone;
-
+    if(role_name) user.role_name = role_name;
     // Hash the password if it needs updating
     if (password) {
       user.password = await bcrypt.hash(password, 10);

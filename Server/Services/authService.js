@@ -17,14 +17,14 @@ const loginUser = async (email, password) => {
 
     // Check if user exists
     if (!user) {
-      return { success: false, message: 'Invalid email or password' };
+      return { success: false, message: 'Invalid email or password', code: 401 };
     }
 
     // Compare entered password with stored hashed password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return { success: false, message: 'Invalid email or password' };
+      return { success: false, message: 'Invalid email or password', code: 401 };
     }
 
     // Generate a JWT token after successful login
@@ -35,10 +35,9 @@ const loginUser = async (email, password) => {
         role: user.Role ? user.Role.name : null, 
       },
       process.env.JWT_SECRET, 
-      { expiresIn: '1h' } 
+      { expiresIn: process.env.JWT_EXPIRATION || '1h' } // Use dynamic expiry time
     );
 
-    
     return {
       success: true,
       message: 'Login successful',
@@ -52,7 +51,7 @@ const loginUser = async (email, password) => {
 
   } catch (error) {
     console.error('Error during login:', error);
-    return { success: false, message: 'An error occurred during login' };
+    return { success: false, message: 'An error occurred during login', code: 500 };
   }
 };
 

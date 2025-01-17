@@ -1,5 +1,8 @@
 const Visitor = require('../Models/Visitors.model'); // Adjust path to your model file
-
+const sharp = require('sharp'); // For image manipulation (if required)
+const path = require('path');
+const fs = require('fs');
+const { sendOtp } = require('../Services/otpService'); 
 // Service to create a new visitor
 const createVisitor = async ({
   name,
@@ -19,11 +22,17 @@ const createVisitor = async ({
   created_by
 }) => {
   try {
+    const otpCode = Math.floor(1000 + Math.random() * 9000);
+
+    // Send OTP
+    await sendOtp(otpCode, mobile_number);
+
+    // Save visitor data to database
     const newVisitor = await Visitor.create({
       name,
       address,
       gender,
-      photo,  // If not provided, it defaults to null
+      photo,  
       date_of_birth,
       mobile_number,
       pancard,
@@ -31,7 +40,7 @@ const createVisitor = async ({
       whom_to_meet,
       purpose_of_meet,
       visiting_date,
-      otp,
+      otp: otpCode,
       status,
       visited,
       created_by
@@ -42,6 +51,7 @@ const createVisitor = async ({
     throw new Error('Error creating visitor: ' + error.message);
   }
 };
+
 
 // Service to fetch all visitors
 const getAllVisitors = async () => {
@@ -94,19 +104,39 @@ const getVisitorByMobileNumber = async (mobileNumber) => {
     if (!visitor) throw new Error('Visitor not found');
 
     // Assuming 'photo' is a BLOB (binary data)
-    const imageBase64 = visitor.photo ? visitor.photo.toString('base64') : null;
+    // const imageBase64 = visitor.photo ? visitor.photo.toString('base64') : null;
 
     // Return visitor data along with the base64 image if available
     return {
-      ...visitor.toJSON(), // Spread the visitor data to include all other fields
-      image: imageBase64 ? `data:image/png;base64,${imageBase64}` : null, // Include the base64 image
+      ...visitor.toJSON(),
+      photoUrl: visitor.photo ? ` http://localhost:3000${visitor.photo}` : null,
     };
   } catch (error) {
     throw new Error('Error fetching visitor: ' + error.message);
   }
 };
+const getVisitorByOtp = async (otp) => {
+  try {
+    const visitor = await Visitor.findOne({
+      where: { otp },
+    });
 
+    if (!visitor) throw new Error('Invalid OTP');
 
+    // Check if OTP has expired
+    const currentTime = new Date();
+    if (visitor.otp_expires_at && visitor.otp_expires_at < currentTime) {
+      throw new Error('OTP has expired');
+    }
+
+    return {
+      ...visitor.toJSON(),
+      photoUrl: visitor.photo ? `http://localhost:3000${visitor.photo}` : null,
+    };
+  } catch (error) {
+    throw new Error(`Error fetching visitor: ${error.message}`);
+  }
+};
 // Service to delete a visitor
 const deleteVisitor = async (id) => {
   try {
@@ -152,31 +182,68 @@ const updateOTP = async (id, otp) => {
     throw new Error('Error updating OTP: ' + error.message);
   }
 };
-const updateVisitorByMobileNumber = async (mobileNumber,updateData,photofile) => {
+
+// Service to update visitor's photo and other fields by mobile number
+const updateVisitorByMobileNumber = async (mobileNumber, updateData, photoFile) => {
   try {
     const visitor = await Visitor.findOne({ where: { mobile_number: mobileNumber } }); // Find the visitor by mobile number
     if (!visitor) throw new Error('Visitor not found');
-    if(photofile){
-      const photoBuffer = await savePhoto(photofile);
-      updateData.photo = photoBuffer;
-      return photoBuffer;
+
+    // If a photo file is provided, process it
+    if (photoFile) {
+      const photopath = await savePhoto(photoFile); // Save the photo as a buffer
+      updateData.photo = photopath; // Add the photo buffer to the update data
     }
+
     // Update only the fields provided in the updateData object
     const updatedVisitor = await visitor.update({
       ...updateData, // Spread the fields to update (fields can be optional)
       updated_date: new Date() // Update the `updated_date` field
     });
+
     return updatedVisitor;
   } catch (error) {
-    throw new Error('Error updating visitor: ' + error.message);
+    throw new Error('Error updating visitor by mobile number: ' + error.message);
   }
 };
-const savePhoto = async (photoFile) => {
-  // Convert the photo to a Buffer (binary data)
-  const buffer = await photoFile.buffer; // Assuming photoFile is a multer file (use .buffer for direct binary data)
+const updateVisitorByOtp = async (otp, updateData, photoFile) => {
+  try {
+    const visitor = await Visitor.findOne({ where: { otp: otp } }); // Find the visitor by mobile number
+    if (!visitor) throw new Error('Visitor not found');
 
-  // You can store the buffer as binary data in your database
-  return buffer;
+    // If a photo file is provided, process it
+    if (photoFile) {
+      const photopath = await savePhoto(photoFile); // Save the photo as a buffer
+      updateData.photo = photopath; // Add the photo buffer to the update data
+    }
+
+    // Update only the fields provided in the updateData object
+    const updatedVisitor = await visitor.update({
+      ...updateData, // Spread the fields to update (fields can be optional)
+      updated_date: new Date() // Update the `updated_date` field
+    });
+
+    return updatedVisitor;
+  } catch (error) {
+    throw new Error('Error updating visitor by mobile number: ' + error.message);
+  }
+};
+
+// Function to save the photo as PNG (or in any other format you prefer)
+// Save photo to a specific directory
+const savePhoto = async (photoFile) => {
+  try {
+    const photoPath = `/uploads/visitor_photos/${Date.now()}-${photoFile.originalname}`;
+    const fullPath = path.join(__dirname, '..', photoPath);
+
+    // Save the photo using Sharp
+    await sharp(photoFile)
+      .toFile(fullPath);
+
+    return photoPath; // Return relative path to the saved photo
+  } catch (error) {
+    throw new Error('Error saving photo: ' + error.message);
+  }
 };
 
 module.exports = {
@@ -187,6 +254,8 @@ module.exports = {
   deleteVisitor,
   markAsVisited,
   updateOTP,
-  getVisitorByMobileNumber, // Newly added service
-  updateVisitorByMobileNumber // Newly added service
+  getVisitorByMobileNumber,
+  updateVisitorByMobileNumber,
+  updateVisitorByOtp,
+  getVisitorByOtp
 };
