@@ -41,7 +41,7 @@ const Login = () => {
       });
   
       const data = await response.json();
-  
+  // console.log({data});
       if (!response.ok) {
         setError(data.message || 'Login failed');
         setIsLoading(false);
@@ -53,7 +53,7 @@ const Login = () => {
       localStorage.setItem('Auth', data.token);
       localStorage.setItem('role', JSON.stringify(data.user.role));
       localStorage.setItem('user', JSON.stringify({ token: data.token, role: data.user.role, user: data.user }));
-  
+      localStorage.setItem('userId', data.user.id); 
       // Redirect to the respective dashboard
       switch (data.user.role) {
         case 'SuperAdmin':

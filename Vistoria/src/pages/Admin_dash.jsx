@@ -8,8 +8,9 @@ const Admin_dash = () => {
   const [toggle, setToggle] = useState(false);
   const [list, setList] = useState([]);
   const [updateVisitor, setUpdateVisitor] = useState(null); // Holds the user data for update
-const [time,settime]=useState(null);
-const [DOB,setDOB]=useState(null);
+  const [time, setTime] = useState(null);
+  const [DOB, setDOB] = useState(null);
+
   const ClickHandler = () => {
     setToggle((prev) => !prev);
     if (updateVisitor) {
@@ -19,28 +20,26 @@ const [DOB,setDOB]=useState(null);
 
   const fetchdata = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/visit/visitors', {
+      const adminId = localStorage.getItem('userId'); // Get adminId from localStorage
+      const response = await fetch(`http://localhost:3000/api/visit/visitors?adminid=${adminId}`, {
         method: 'GET',
       });
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
+
       const jsonData = await response.json();
       setList(jsonData);
-      for (let i = 0; i < jsonData.length; i++) {
-        
-        const date = jsonData[i].visiting_date;
-        const date2 = jsonData[i].date_of_birth;
-        // console.log(date2)
-        const FromtedDate2 = new Date(date2).toLocaleDateString();
-        const FormatedDate = new Date(date).toLocaleDateString();
-        // console.log({FormatedDate})
-        settime(FormatedDate);
-        setDOB(FromtedDate2);
-        
-      }
-      // console.log({jsonData})
+      // console.log({jsonData});
+      jsonData.forEach(visitor => {
+        const date = visitor.visiting_date;
+        const date2 = visitor.date_of_birth;
+        const formattedDate2 = new Date(date2).toLocaleDateString();
+        const formattedDate = new Date(date).toLocaleDateString();
+        setTime(formattedDate);
+        setDOB(formattedDate2);
+      });
     } catch (err) {
       console.error('Fetch Error:', err);
     }
@@ -70,7 +69,6 @@ const [DOB,setDOB]=useState(null);
 
   const updateHandler = (visitor) => {
     setUpdateVisitor(visitor); 
-    // console.log({ visitor }); 
     setToggle(true);
   };
 
@@ -102,11 +100,7 @@ const [DOB,setDOB]=useState(null);
 
       {toggle && (
         <VisitorForm
-          submitUrl={
-            updateVisitor
-              ? `http://localhost:3000/api/visit/visitors/${updateVisitor.id}` // Update endpoint
-              : 'http://localhost:3000/api/visit/visitors' // Create endpoint
-          }
+          submitUrl={updateVisitor ? `http://localhost:3000/api/visit/visitors/${updateVisitor.id}` : 'http://localhost:3000/api/visit/visitors'} // Update or Create endpoint
           initialData={updateVisitor} // Pre-fill form data for update
           onSubmit={(data) => {
             console.log('Form Data before submission:', data);

@@ -14,14 +14,16 @@ const userSlice = createSlice({
   reducers: {
     // Action to set user data after login
     setUser: (state, action) => {
-      state.user = action.payload.user;
+      const { token, role, user } = action.payload;
+      state.user = user;
       state.isAuthenticated = true;
-      state.role = action.payload.role;
+      state.role = role;
 
       // Save to localStorage
-      localStorage.setItem('Auth', action.payload.token); // Save token
-      localStorage.setItem('role', action.payload.role); // Save role
-      localStorage.setItem('user', JSON.stringify(action.payload.user)); // Save user data
+      localStorage.setItem('Auth', token); // Save token
+      localStorage.setItem('role',role); // Save role
+      localStorage.setItem('user', JSON.stringify(user)); // Save user data
+      localStorage.setItem('userId', user.id); // Save user ID
     },
     
     // Action to clear user data on logout
@@ -34,6 +36,7 @@ const userSlice = createSlice({
       localStorage.removeItem('Auth'); // Clear token
       localStorage.removeItem('role'); // Clear role
       localStorage.removeItem('user'); // Clear user data
+      localStorage.removeItem('userId'); // Clear user ID
     },
   },
 });
