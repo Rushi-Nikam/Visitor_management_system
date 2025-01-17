@@ -1,9 +1,10 @@
 import React, { useState, useRef } from "react";
 import Webcam from "react-webcam";
-
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import VisitorPDF from "../Component/VisitorPDF";
 const Operator_dash = () => {
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [otp,setotp]=useState("");
+  // const [mobileNumber, setMobileNumber] = useState("");
+  const [otp, setotp] = useState("");
   const [visitor, setVisitor] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -11,6 +12,7 @@ const Operator_dash = () => {
   const [updatedVisitor, setUpdatedVisitor] = useState({}); // Store updated visitor data
   const [successMessage, setSuccessMessage] = useState(null); // State for success message
   const [photo, setPhoto] = useState(null); // Store photo file
+  const [showPreview, setShowPreview] = useState(false); // State for showing preview
   const webcamRef = useRef(null);
 
   // Fetch visitor by mobile number
@@ -144,6 +146,7 @@ const Operator_dash = () => {
                 <th className="border border-gray-300 px-4 py-2">Status</th>
                 <th className="border border-gray-300 px-4 py-2">Visited</th>
                 <th className="border border-gray-300 px-4 py-2">Action</th>
+                <th className="border border-gray-300 px-4 py-2">Preview</th> {/* Added Preview column */}
               </tr>
             </thead>
             <tbody>
@@ -181,11 +184,20 @@ const Operator_dash = () => {
                     Edit
                   </button>
                 </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  <button
+                    onClick={() => setShowPreview(!showPreview)}
+                    className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
+                  >
+                    Preview
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
       )}
+
       {isEditing && visitor && (
         <div className="mt-6">
           <h2 className="text-xl font-semibold mb-4">Edit Visitor Details</h2>
@@ -293,6 +305,71 @@ const Operator_dash = () => {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {showPreview && visitor && (
+        <div className="mt-6 bg-gray-100 p-4 rounded-md shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Visitor Preview</h2>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Name:</label>
+            <p>{visitor.name}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Photo:</label>
+            {visitor.photo ? (
+              <img
+                src={`http://localhost:3000${visitor.photo}`}
+                alt={`${visitor.name}'s photo`}
+                style={{ width: "100px", height: "100px", objectFit: "cover" }}
+              />
+            ) : (
+              <span>No photo available</span>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Gender:</label>
+            <p>{visitor.gender}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">DOB:</label>
+            <p>{visitor.DOB}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Visitor Date:</label>
+            <p>{visitor.visiting_date}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Whom to Meet:</label>
+            <p>{visitor.whom_to_meet}</p>
+          </div>
+          <PDFDownloadLink
+            document={<VisitorPDF visitor={visitor} />}
+            fileName={`${visitor.name}_details.pdf`}
+          >
+            {({ loading }) =>
+              loading ? (
+                <button
+                  className="mt-4 px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                  disabled
+                >
+                  Generating PDF...
+                </button>
+              ) : (
+                <button
+                  className="mt-4 px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                >
+                  Download PDF
+                </button>
+              )
+            }
+          </PDFDownloadLink>
+          <button
+            onClick={() => setShowPreview(false)}
+            className="mt-4 px-6 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition"
+          >
+            Close Preview
+          </button>
         </div>
       )}
     </div>
