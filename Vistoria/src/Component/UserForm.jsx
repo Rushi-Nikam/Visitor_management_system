@@ -7,6 +7,7 @@ const UserForm = () => {
     email: '',
     password: '',
     phone: '',
+    role_name: '', 
     created_by: '',
   });
 
@@ -44,11 +45,11 @@ const UserForm = () => {
         alert('User created successfully!');
         setFormData({
           name: '',
-          roleid: '',
-          
+          roleid: '',    
           email: '',
           password: '',
           phone: '',
+          role_name: '', 
           created_by: '',
         }); // Reset the form
       } else {
@@ -81,6 +82,16 @@ const UserForm = () => {
             type="text"
             name="roleid"
             value={formData.roleid}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Role Name</label>
+          <input
+            type="text"
+            name="role_name"
+            value={formData.role_name}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
