@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const UserForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     roleid: '',
@@ -43,6 +45,7 @@ const UserForm = () => {
 
       if (data.success) {
         alert('User created successfully!');
+
         setFormData({
           name: '',
           roleid: '',    
@@ -51,7 +54,9 @@ const UserForm = () => {
           phone: '',
           role_name: '', 
           created_by: '',
-        }); // Reset the form
+        }); 
+        navigate('/')
+        // Reset the form
       } else {
         alert(data.message || 'Error occurred while creating user.');
       }
@@ -144,12 +149,14 @@ const UserForm = () => {
           />
         </div>
 
-        <button
+ <button
           type="submit"
           className="w-48 p-2 flex  text-center justify-center mx-auto bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Submit
         </button>
+
+       
       </form>
     </div>
   );
