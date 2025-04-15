@@ -4,10 +4,10 @@ const User = require('../Models/User.model');
 // Function to create a new user
 const createUser = async (req, res) => {
   try {
-    const { name, roleid,role_name, email, password, phone, created_by } = req.body;
+    const { name, roleid,role_name, email, password, phone,organization, created_by } = req.body;
 
     // Validate required fields
-    if (!name || !roleid || !role_name || !email || !password || !phone || !created_by) {
+    if (!name || !roleid || !role_name || !email || !password || !phone || !organization || !created_by) {
       return res.status(400).json({ 
         success: false, 
         message: 'All fields are required' 
@@ -34,6 +34,7 @@ const createUser = async (req, res) => {
       phone,
       roleid,
       role_name,
+      organization,
       created_by, // Track who created the user
     });
 
@@ -47,6 +48,7 @@ const createUser = async (req, res) => {
         phone: newUser.phone,
         roleid: newUser.roleid,
         role_name:newUser.role_name,
+        organization:newUser.organization,
         created_by: newUser.created_by,
       }, // Exclude sensitive data like hashed password
     });
@@ -73,7 +75,7 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, roleid,role_name, email, password, phone } = req.body;
+    const { name, roleid,role_name, email, password,organization, phone } = req.body;
 
     // Check if the user exists
     const user = await User.findByPk(id);
@@ -90,6 +92,7 @@ const updateUser = async (req, res) => {
     if (email) user.email = email;
     if (phone) user.phone = phone;
     if(role_name) user.role_name = role_name;
+    if(organization) user.organization = organization;
     // Hash the password if it needs updating
     if (password) {
       user.password = await bcrypt.hash(password, 10);

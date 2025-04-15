@@ -82,7 +82,7 @@ const Visitor = sequelize.define('Visitor', {
     defaultValue: DataTypes.NOW,
     onUpdate: DataTypes.NOW
   },
-  adminId: {
+  adminid: {
     type: DataTypes.INTEGER,
     references: {
       model: 'users', // Adjust this to match your actual User model

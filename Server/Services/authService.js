@@ -35,9 +35,9 @@ const loginUser = async (email, password) => {
         role: user.Role ? user.Role.name : null, 
       },
       process.env.JWT_SECRET, 
-      { expiresIn: process.env.JWT_EXPIRATION || '1h' } // Use dynamic expiry time
+      { expiresIn: process.env.JWT_EXPIRATION || '1m' } 
     );
-
+     console.log(token);
     return {
       success: true,
       message: 'Login successful',

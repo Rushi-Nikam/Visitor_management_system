@@ -13,6 +13,7 @@ router.post('/visitors', VisitorController.createVisitor);
 
 // Route to fetch all visitors
 router.get('/visitors', VisitorController.getAllVisitors);
+router.get('/allvisitors/:id', VisitorController.getVisitors);
 
 // Route to fetch a specific visitor by ID
 router.get('/visitors/:id', VisitorController.getVisitorById);

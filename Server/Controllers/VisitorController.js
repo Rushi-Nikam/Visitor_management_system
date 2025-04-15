@@ -35,6 +35,22 @@ const getAllVisitors = async (req, res) => {
     res.status(500).json({ message: 'Error fetching visitors', error: error.message });
   }
 };
+const getVisitors = async (req, res) => {
+  try {
+    const operatorId = req.params.id; // Getting operator ID from URL params
+
+    if (!operatorId) {
+      return res.status(400).json({ message: "Operator ID is required" });
+    }
+
+    const visitors = await VisitorService.getVisitors(operatorId);
+    res.status(200).json(visitors);
+  } catch (error) {
+    console.error("Error in getVisitors:", error);
+    res.status(500).json({ message: "Error fetching visitors", error: error.message });
+  }
+};
+
 
 
 // Get a specific visitor by ID
@@ -244,5 +260,6 @@ module.exports = {
   updateVisitorByOtp,
   deleteVisitor,
   markAsVisited,
-  updateOTP
+  updateOTP,
+  getVisitors,
 };

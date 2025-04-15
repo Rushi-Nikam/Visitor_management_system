@@ -32,6 +32,26 @@ const getAllUsers = async (req, res) => {
     });
   }
 };
+const getUser = async (req, res) => {
+  try {
+    // Extract user ID from the request parameters
+    const userId = req.params.id;
+
+    // Find user by ID in the database
+    const user = await user.findOne({ where: { id: userId } });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Return user data
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 const updateUsers = async (req, res) => {
   try {
     
@@ -57,5 +77,6 @@ module.exports = {
   createUsers,
   getAllUsers,
   updateUsers,
-  deleteUsers
+  deleteUsers,
+  getUser
 };

@@ -29,6 +29,10 @@ const User = db.define('User', {
     type:DataTypes.STRING(100),
     allowNull:false,
   } ,
+  organization:{
+type:DataTypes.STRING(100),
+allowNull:false,
+  },
   roleid: {
     type: DataTypes.INTEGER,
     allowNull: true,
