@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   const user = useSelector((state) => state.user);
   const location = useLocation();
   const token = localStorage.getItem('Auth'); // Token fallback
-  const role = user?.role || JSON.parse(localStorage.getItem('role'));
+  const role = user?.role || JSON.parse(localStorage.getItem(' '));
 
   if (!token) {
     return <Navigate to="/" replace state={{ from: location }} />;

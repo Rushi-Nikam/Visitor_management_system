@@ -11,12 +11,13 @@ import Operator_dash from './pages/Operator_dash';
 import Logout from './pages/Logout';
 import ProtectedRoute from './Component/ProtectedRoute';
 import UserForm from './Component/UserForm';
+import Footer from './pages/Footer';
 
 
 const Routers = () => {
   
   return (
-    <>
+    <div className="min-h-screen">
     
        <Navbar />
 
@@ -59,8 +60,8 @@ const Routers = () => {
   <Route path="/" element={<Login />} />
   <Route path="*" element={<div>404 - Page not found</div>} />
 </Routes>
-
-    </>
+<Footer/>
+    </div>
   );
 };
 

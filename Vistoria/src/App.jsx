@@ -18,9 +18,12 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <>
+<BrowserRouter>
       <Routers/>
     </BrowserRouter>
+    </>
+    
   );
 };
 

@@ -24,7 +24,7 @@ const UserForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate the form data (can be more thorough based on your requirements)
+    
     for (let key in formData) {
       if (!formData[key]) {
         alert(`Please fill in the ${key} field.`);
@@ -56,7 +56,7 @@ const UserForm = () => {
           created_by: '',
         }); 
         navigate('/')
-        // Reset the form
+      
       } else {
         alert(data.message || 'Error occurred while creating user.');
       }
